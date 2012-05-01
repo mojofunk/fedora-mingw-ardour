@@ -1,0 +1,52 @@
+This is a rough list of library dependencies for building Ardour
+for windows using the MinGW compiler on Fedora
+ 
+MinGW Fedora Packages that are already packaged and part of Fedora
+are preceded by a *
+
+The packages contained in this repository are all the packages that
+have not yet been included in Fedora.
+
+*wine, needed to run some tests during the configure process
+
+*mingw32-gcc
+
+*mingw32-libogg
+
+mingw32-flac <- requires libogg
+
+*mingw32-libvorbis
+
+mingw32-libsndfile <- requires flac, vorbis
+mingw32-libsamplerate <- requires sndfile for examples?
+
+*mingw32-gtkmm24, this will pull in all the gtk+ deps etc
+
+mingw32-gtk2-engines <- provides clearlooks
+
+*mingw32-libglade2, required for gnomecanvas 
+
+mingw32-libart_lgpl
+mingw32-libgnomecanvas <- requires libart, libglade2
+mingw32-libgnomecanvasmm
+
+mingw32-portaudio
+
+mingw32-jack-audio-connection-kit
+
+mingw32-ladspa
+
+mingw32-fftw
+
+*mingw32-libxslt
+mingw32-raptor <- requires libxslt
+mingw32-liblrdf <- requires raptor,ladspa
+
+*mingw32-curl
+
+Optional
+
+*mingw32-cppunit, if tests enabled
+*mingw32-gdb, for debugging
+
+*qemu-kvm to run virt images
