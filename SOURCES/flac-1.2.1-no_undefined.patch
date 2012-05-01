@@ -1,0 +1,60 @@
+--- flac-1.2.1/autogen.sh	2007-09-16 21:21:38.000000000 +0200
++++ flac-1.2.1/autogen.sh	2009-05-26 14:51:20.000000000 +0200
+@@ -159,4 +159,4 @@
+ autoconf || exit 1
+ 
+ cd $olddir
+-$srcdir/configure --enable-maintainer-mode "$@" && echo
++#$srcdir/configure --enable-maintainer-mode "$@" && echo
+--- flac-1.2.1/examples/cpp/encode/file/main.cpp	2007-09-13 17:58:03.000000000 +0200
++++ flac-1.2.1/examples/cpp/encode/file/main.cpp	2009-05-26 09:52:29.000000000 +0200
+@@ -30,6 +30,7 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include "FLAC++/metadata.h"
+ #include "FLAC++/encoder.h"
+ 
+--- flac-1.2.1/include/share/alloc.h	2007-09-12 07:32:21.000000000 +0200
++++ flac-1.2.1/include/share/alloc.h	2009-05-26 09:48:15.000000000 +0200
+@@ -28,7 +28,7 @@
+  */
+ 
+ #include <limits.h> /* for SIZE_MAX */
+-#if !defined _MSC_VER && !defined __MINGW32__ && !defined __EMX__
++#if !defined _MSC_VER && !defined __EMX__
+ #include <stdint.h> /* for SIZE_MAX in case limits.h didn't get it */
+ #endif
+ #include <stdlib.h> /* for size_t, malloc(), etc */
+--- flac-1.2.1/src/libFLAC/Makefile.am	2007-09-14 23:06:17.000000000 +0200
++++ flac-1.2.1/src/libFLAC/Makefile.am	2009-05-26 09:59:39.000000000 +0200
+@@ -69,7 +69,7 @@
+ endif
+ endif
+ 
+-libFLAC_la_LIBADD = $(LOCAL_EXTRA_LIBADD) @OGG_LIBS@
++libFLAC_la_LIBADD = $(LOCAL_EXTRA_LIBADD) @OGG_LIBS@ -lws2_32
+ 
+ SUBDIRS = $(ARCH_SUBDIRS) include .
+ 
+@@ -96,7 +96,7 @@
+ 	ogg_mapping.c
+ endif
+ # see 'http://www.gnu.org/software/libtool/manual.html#Libtool-versioning' for numbering convention
+-libFLAC_la_LDFLAGS = -version-info 10:0:2 -lm $(LOCAL_EXTRA_LDFLAGS)
++libFLAC_la_LDFLAGS = -version-info 10:0:2 -lm $(LOCAL_EXTRA_LDFLAGS) -no-undefined
+ libFLAC_la_SOURCES = \
+ 	bitmath.c \
+ 	bitreader.c \
+--- flac-1.2.1/src/libFLAC++/Makefile.am	2007-09-14 23:06:10.000000000 +0200
++++ flac-1.2.1/src/libFLAC++/Makefile.am	2009-05-26 09:55:10.000000000 +0200
+@@ -46,7 +46,7 @@
+ 	libFLAC++.m4
+ 
+ # see 'http://www.gnu.org/software/libtool/manual.html#Libtool-versioning' for numbering convention
+-libFLAC___la_LDFLAGS = -version-info 8:0:2
++libFLAC___la_LDFLAGS = -version-info 8:0:2 -no-undefined
+ libFLAC___la_LIBADD = ../libFLAC/libFLAC.la
+ 
+ libFLAC___la_SOURCES = \
