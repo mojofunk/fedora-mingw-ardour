@@ -1,0 +1,28 @@
+From 1e00e636602768ea7ec4e03ffe7fcec95d6eda54 Mon Sep 17 00:00:00 2001
+From: Tim Mayberry <mojofunk@gmail.com>
+Date: Mon, 30 Apr 2012 18:41:27 +1000
+Subject: [PATCH 2/4] Define SHGFP_TYPE_CURRENT if it isn't already.
+
+MinGW compiler doesn't define this by default
+---
+ windows/JackWinServerLaunch.cpp |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/windows/JackWinServerLaunch.cpp b/windows/JackWinServerLaunch.cpp
+index 3c4893f..d98c75a 100644
+--- a/windows/JackWinServerLaunch.cpp
++++ b/windows/JackWinServerLaunch.cpp
+@@ -34,6 +34,10 @@ using namespace Jack;
+ 
+ #if defined(_MSC_VER) || defined(__MINGW__) || defined(__MINGW32__)
+ 
++#ifndef SHGFP_TYPE_CURRENT
++#define SHGFP_TYPE_CURRENT 0
++#endif
++
+ static char*
+ find_path_to_jackdrc(char *path_to_jackdrc)
+ {
+-- 
+1.7.7.6
+

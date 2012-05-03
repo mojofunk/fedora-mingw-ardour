@@ -1,0 +1,430 @@
+From 59024d4a723c388b4db9f72208481eed0ea0a445 Mon Sep 17 00:00:00 2001
+From: Tim Mayberry <mojofunk@gmail.com>
+Date: Sat, 28 Apr 2012 19:04:44 +1000
+Subject: [PATCH 1/4] Add support for building with mingw compiler
+
+Add --dist-target build option(auto, mingw)
+Add configure flags for building with portaudio and winmme support
+---
+ common/wscript  |   89 ++++++++++++++++++++++++++++++++++++++++++++++--------
+ windows/wscript |   71 +++++++++++++++++++++++++++++++++++++++++++
+ wscript         |   55 +++++++++++++++++++++++++++++----
+ 3 files changed, 194 insertions(+), 21 deletions(-)
+ create mode 100644 windows/wscript
+
+diff --git a/common/wscript b/common/wscript
+index 807e5e2..cb8152f 100644
+--- a/common/wscript
++++ b/common/wscript
+@@ -14,9 +14,16 @@ def configure(conf):
+     conf.env['BUILD_NETLIB'] = conf.is_defined('HAVE_SAMPLERATE')
+     conf.env['BUILD_ADAPTER'] = conf.is_defined('HAVE_SAMPLERATE')
+ 
++    if conf.env['IS_WINDOWS']:
++        conf.check_cc(function_name='regcomp', header_name='regex.h', lib='regex', uselib_store="REGEX", define_name='HAVE_REGEX_H')
++        conf.check_cc(function_name='htons', header_name='winsock2.h', lib='ws2_32', uselib_store="WS2_32", define_name='HAVE_WINSOCK2_H')
++        conf.check_cc(function_name='timeGetDevCaps', header_name=['windows.h', 'mmsystem.h'], lib='winmm', uselib_store="WINMM", define_name='HAVE_MMSYSTEM_H')
++        conf.check_cc(function_name='EnumProcesses', header_name=['windows.h', 'psapi.h'], lib='psapi', uselib_store="PSAPI", define_name='HAVE_PSAPI_H')
++
+ def create_jack_process_obj(bld, target, sources, uselib = None):
+     process = bld(features = ['cxx', 'cxxshlib'])
+-    process.env['cxxshlib_PATTERN'] = '%s.so'
++    if not bld.env['IS_WINDOWS']:
++        process.env['cxxshlib_PATTERN'] = '%s.so'
+     process.defines  = ['HAVE_CONFIG_H','SERVER_SIDE']
+     if bld.env['IS_MACOSX']:
+         env_includes = ['../macosx', '../posix', '../macosx/coreaudio']
+@@ -24,6 +31,8 @@ def create_jack_process_obj(bld, target, sources, uselib = None):
+         env_includes = ['../linux', '../posix', '../linux/alsa']
+     if bld.env['IS_SUN']:
+         env_includes = ['../solaris', '../posix', '../solaris/oss']
++    if bld.env['IS_WINDOWS']:
++        env_includes = ['../windows', '../windows/portaudio']
+     process.includes = ['.'] + env_includes + ['jack', '..']
+     process.name     = target
+     process.target   = target
+@@ -59,9 +68,7 @@ def build(bld):
+         'JackGenericClientChannel.cpp',
+         'shm.c',
+         'JackGlobals.cpp',
+-        'JackDebugClient.cpp',
+         'JackTransportEngine.cpp',
+-        'timestamps.c',
+         'JackTools.cpp',
+         'JackMessageBuffer.cpp',
+         'JackEngineProfiling.cpp',
+@@ -72,6 +79,8 @@ def build(bld):
+ 
+     if bld.env['IS_LINUX']:
+         common_libsources += [
++            'JackDebugClient.cpp',
++            'timestamps.c',
+             '../posix/JackPosixThread.cpp',
+             '../posix/JackPosixSemaphore.cpp',
+             '../posix/JackPosixProcessSync.cpp',
+@@ -85,6 +94,8 @@ def build(bld):
+ 
+     if bld.env['IS_SUN']:
+         common_libsources += [
++            'JackDebugClient.cpp',
++            'timestamps.c',
+            '../posix/JackPosixThread.cpp',
+            '../posix/JackFifo.cpp',
+            '../posix/JackPosixProcessSync.cpp',
+@@ -97,6 +108,8 @@ def build(bld):
+ 
+     if bld.env['IS_MACOSX']:
+         common_libsources += [
++            'JackDebugClient.cpp',
++            'timestamps.c',
+             '../posix/JackPosixProcessSync.cpp',
+             '../posix/JackPosixThread.cpp',
+             '../macosx/JackMachThread.cpp',
+@@ -106,13 +119,30 @@ def build(bld):
+             ]
+         includes = ['../macosx', '../macosx/RPC', '../posix'] + includes
+ 
++    if bld.env['IS_WINDOWS']:
++        common_libsources += [
++            '../windows/JackWinMutex.cpp',
++            '../windows/JackWinProcessSync.cpp',
++            '../windows/JackWinSemaphore.cpp',
++            '../windows/JackWinThread.cpp',
++            '../windows/JackWinTime.c',
++            ]
++        includes = ['../windows' ] + includes
++        uselib.append('REGEX')
++        uselib.append('WS2_32')
++        uselib.append('PSAPI')
++        uselib.append('WINMM')
++
+     serverlib = bld(features = ['c', 'cxx', 'cxxshlib', 'cshlib'])
+     serverlib.defines = ['HAVE_CONFIG_H','SERVER_SIDE']
+     serverlib.includes = includes
+     serverlib.name         = 'serverlib'
+     serverlib.target       = 'jackserver'
+     serverlib.use = uselib
+-    serverlib.install_path = '${LIBDIR}'
++    if bld.env['IS_WINDOWS']:
++         serverlib.install_path = '${BINDIR}'
++    else:
++         serverlib.install_path = '${LIBDIR}'
+     serverlib.source = [] + common_libsources
+     serverlib.source += [
+         'JackAudioDriver.cpp',
+@@ -172,6 +202,16 @@ def build(bld):
+             '../posix/JackNetUnixSocket.cpp',
+             ]
+ 
++    if bld.env['IS_WINDOWS']:
++        serverlib.source += [
++            '../windows/JackMMCSS.cpp',
++            '../windows/JackWinNamedPipe.cpp',
++            '../windows/JackWinNamedPipeServerChannel.cpp',
++            '../windows/JackWinNamedPipeServerNotifyChannel.cpp',
++            '../windows/JackWinNamedPipeNotifyChannel.cpp',
++            '../windows/JackNetWinSocket.cpp',
++            ]
++
+     serverlib.vnum = bld.env['JACK_API_VERSION']
+ 
+     if bld.env['IS_LINUX']:
+@@ -193,8 +233,13 @@ def build(bld):
+         netlib.includes = includes
+         netlib.name         = 'netlib'
+         netlib.target       = 'jacknet'
+-        netlib.use = ['SAMPLERATE', 'CELT', 'PTHREAD' , 'RT']
+-        netlib.install_path = '${LIBDIR}'
++        netlib.use = ['SAMPLERATE', 'CELT', 'PTHREAD']
++        if bld.env['IS_WINDOWS']:
++             netlib.install_path = '${BINDIR}'
++             netlib.use += ['WS2_32', 'WINMM']
++        else:
++             netlib.use += ['RT']
++             netlib.install_path = '${LIBDIR}'
+         netlib.source = [
+             'JackNetAPI.cpp',
+             'JackNetInterface.cpp',
+@@ -204,28 +249,33 @@ def build(bld):
+             'JackLibSampleRateResampler.cpp',
+             'JackResampler.cpp',
+             'JackGlobals.cpp',
+-            '../posix/JackPosixMutex.cpp',
+             'ringbuffer.c']
+ 
+         if bld.env['IS_LINUX']:
+-            netlib.source += ['../posix/JackNetUnixSocket.cpp','../posix/JackPosixThread.cpp', '../linux/JackLinuxTime.c']
++            netlib.source += ['../posix/JackNetUnixSocket.cpp','../posix/JackPosixThread.cpp', '../posix/JackPosixMutex.cpp', '../linux/JackLinuxTime.c']
+             netlib.env.append_value("CPPFLAGS", "-fvisibility=hidden")
+ 
+         if bld.env['IS_SUN']:
+-            netlib.source += ['../posix/JackNetUnixSocket.cpp','../posix/JackPosixThread.cpp', '../solaris/JackSolarisTime.c']
++            netlib.source += ['../posix/JackNetUnixSocket.cpp','../posix/JackPosixThread.cpp', '../posix/JackPosixMutex.cpp', '../solaris/JackSolarisTime.c']
+             netlib.env.append_value("CPPFLAGS", "-fvisibility=hidden")
+        
+ 
+         if bld.env['IS_MACOSX']:
+-            netlib.source += ['../posix/JackNetUnixSocket.cpp','../posix/JackPosixThread.cpp', '../macosx/JackMachThread.cpp', '../macosx/JackMachTime.c']
++            netlib.source += ['../posix/JackNetUnixSocket.cpp','../posix/JackPosixThread.cpp', '../posix/JackPosixMutex.cpp', '../macosx/JackMachThread.cpp', '../macosx/JackMachTime.c']
+             netlib.env.append_value("LINKFLAGS", "-framework CoreAudio -single_module")
+ 
++        if bld.env['IS_WINDOWS']:
++            netlib.source += ['../windows/JackNetWinSocket.cpp','../windows/JackWinThread.cpp', '../windows/JackMMCSS.cpp', '../windows/JackWinTime.c']
++
+         netlib.vnum = bld.env['JACK_API_VERSION']
+ 
+     clientlib = bld(features = ['c', 'cxx', 'cxxshlib', 'cshlib'])
+     clientlib.defines = 'HAVE_CONFIG_H'
+     clientlib.use = uselib
+-    clientlib.install_path = '${LIBDIR}'
++    if bld.env['IS_WINDOWS']:
++         clientlib.install_path = '${BINDIR}'
++    else:
++         clientlib.install_path = '${LIBDIR}'
+     if bld.env['BUILD_JACKDBUS'] == True and bld.env['BUILD_JACKD'] == False:
+         clientlib.use.append('DBUS-1')
+     clientlib.includes = includes
+@@ -255,6 +305,14 @@ def build(bld):
+             '../posix/JackPosixServerLaunch.cpp',
+             ]
+ 
++    if bld.env['IS_WINDOWS']:
++        clientlib.source += [
++            '../windows/JackWinNamedPipe.cpp',
++            '../windows/JackWinNamedPipeClientChannel.cpp',
++            '../windows/JackWinServerLaunch.cpp',
++            '../windows/JackMMCSS.cpp',
++            ]
++
+     clientlib.vnum = bld.env['JACK_API_VERSION']
+ 
+     if bld.env['IS_LINUX']:
+@@ -288,7 +346,7 @@ def build(bld):
+ 
+     if bld.env['BUILD_ADAPTER'] == True:
+         process = create_jack_process_obj(bld, 'netadapter', net_adapter_sources, serverlib)
+-        process.use = 'SAMPLERATE'
++        process.use += ['SAMPLERATE']
+ 
+     audio_adapter_sources = [
+         'JackResampler.cpp',
+@@ -314,8 +372,11 @@ def build(bld):
+          process = create_jack_process_obj(bld, 'audioadapter', audio_adapter_sources, serverlib)
+          process.use = 'SAMPLERATE'
+ 
+-    #audio_adapter_sources += ['../windows/JackPortAudioAdapter.cpp']
+-    #process = create_jack_process_obj(bld, 'audioadapter', audio_adapter_sources, serverlib)
++    if bld.env['BUILD_ADAPTER'] and bld.env['IS_WINDOWS']:
++         audio_adapter_sources += ['../windows/portaudio/JackPortAudioAdapter.cpp', '../windows/portaudio/JackPortAudioDevices.cpp']
++         process = create_jack_process_obj(bld, 'audioadapter', audio_adapter_sources, serverlib)
++         process.use += ['SAMPLERATE', 'PORTAUDIO']
++
+ 
+     bld.install_files('${PREFIX}/include/jack', bld.path.ant_glob('jack/*.h'))
+ 
+diff --git a/windows/wscript b/windows/wscript
+new file mode 100644
+index 0000000..ea4dd3d
+--- /dev/null
++++ b/windows/wscript
+@@ -0,0 +1,71 @@
++#! /usr/bin/env python
++# encoding: utf-8
++
++def configure(conf):
++    conf.check_cfg(package='portaudio-2.0', uselib_store='PORTAUDIO', atleast_version='19', args='--cflags --libs')
++    conf.env['BUILD_DRIVER_PORTAUDIO'] = conf.is_defined('HAVE_PORTAUDIO')
++
++def create_jack_driver_obj(bld, target, sources, uselib = None):
++    driver = bld(features = ['c', 'cxx', 'cxxshlib', 'cshlib'])
++    driver.env['cxxshlib_PATTERN'] = 'jack_%s.dll'
++    driver.defines = ['HAVE_CONFIG_H','SERVER_SIDE']
++    driver.includes = ['.', '..' , '../windows', '../common', '../common/jack']
++    driver.target = target
++    driver.source = sources
++    driver.install_path = '${ADDON_DIR}/'
++    driver.use = ['serverlib']
++    if uselib:
++        driver.use += uselib
++    return driver
++
++def build(bld):
++    if bld.env['BUILD_JACKD'] == True:
++        jackd = bld(features = ['cxx', 'cxxprogram'])
++        jackd.includes = ['..', '../windows', '../common/jack', '../common', '../dbus']
++        jackd.defines = ['HAVE_CONFIG_H','SERVER_SIDE']
++        jackd.source = ['../common/Jackdmp.cpp']
++        jackd.install_path = '${BINDIR}'
++        jackd.use = ['serverlib']
++        jackd.target = 'jackd'
++
++    create_jack_driver_obj(bld, 'dummy', '../common/JackDummyDriver.cpp')
++
++    winmme_driver_src = [
++                       'winmme/JackWinMMEDriver.cpp',
++                       'winmme/JackWinMMEInputPort.cpp',
++                       'winmme/JackWinMMEOutputPort.cpp',
++                       'winmme/JackWinMMEPort.cpp',
++                       ]
++
++    if bld.env['BUILD_DRIVER_WINMME'] == True:
++        winmme_driver = bld(features = ['c', 'cxx', 'cxxshlib', 'cshlib'])
++        winmme_driver.env['cxxshlib_PATTERN'] = 'jack_%s.dll'
++        winmme_driver.defines = ['HAVE_CONFIG_H','SERVER_SIDE']
++        winmme_driver.includes = ['.', '..' , '../windows', '../common', '../common/jack']
++        winmme_driver.target = 'winmme'
++        winmme_driver.source = winmme_driver_src
++        winmme_driver.install_path = '${ADDON_DIR}/'
++        winmme_driver.use = ['serverlib', 'WINMME']
++
++    portaudio_driver_src = [
++                       'portaudio/JackPortAudioDevices.cpp',
++                       'portaudio/JackPortAudioDriver.cpp',
++                       ]
++
++    if bld.env['BUILD_DRIVER_PORTAUDIO'] == True:
++        portaudio_driver = bld(features = ['c', 'cxx', 'cxxshlib', 'cshlib'])
++        portaudio_driver.env['cxxshlib_PATTERN'] = 'jack_%s.dll'
++        portaudio_driver.defines = ['HAVE_CONFIG_H','SERVER_SIDE']
++        portaudio_driver.includes = ['.', '..' , '../windows', '../common', '../common/jack']
++        portaudio_driver.target = 'portaudio'
++        portaudio_driver.source = portaudio_driver_src
++        portaudio_driver.install_path = '${ADDON_DIR}/'
++        portaudio_driver.use = ['serverlib', 'PORTAUDIO' ]
++
++    create_jack_driver_obj(bld, 'net', '../common/JackNetDriver.cpp')
++
++    create_jack_driver_obj(bld, 'loopback', '../common/JackLoopbackDriver.cpp')
++
++    create_jack_driver_obj(bld, 'netone', [ '../common/JackNetOneDriver.cpp',
++                                            '../common/netjack.c',
++                                            '../common/netjack_packet.c' ], ["SAMPLERATE", "CELT"] )
+diff --git a/wscript b/wscript
+index d9cad01..d6a7fd7 100644
+--- a/wscript
++++ b/wscript
+@@ -66,6 +66,7 @@ def options(opt):
+     opt.add_option('--libdir32', type='string', help="32bit Library directory [Default: <prefix>/lib32]")
+     opt.add_option('--mandir', type='string', help="Manpage directory [Default: <prefix>/share/man/man1]")
+     opt.add_option('--dbus', action='store_true', default=False, help='Enable D-Bus JACK (jackdbus)')
++    opt.add_option('--dist-target', type='string', default='auto', help='Specify the target for cross-compiling [auto,mingw]')
+     opt.add_option('--classic', action='store_true', default=False, help='Force enable standard JACK (jackd) even if D-Bus JACK (jackdbus) is enabled too')
+     opt.add_option('--doxygen', action='store_true', default=False, help='Enable build of doxygen documentation')
+     opt.add_option('--profile', action='store_true', default=False, help='Build with engine profiling')
+@@ -76,13 +77,18 @@ def options(opt):
+     opt.add_option('--firewire', action='store_true', default=False, help='Enable FireWire driver (FFADO)')
+     opt.add_option('--freebob', action='store_true', default=False, help='Enable FreeBob driver')
+     opt.add_option('--alsa', action='store_true', default=False, help='Enable ALSA driver')
++    opt.add_option('--portaudio', action='store_true', default=False, help='Enable Portaudio driver')
++    opt.add_option('--winmme', action='store_true', default=False, help='Enable WinMME driver')
+     opt.sub_options('dbus')
+ 
+ def configure(conf):
+     platform = sys.platform
+-    conf.env['IS_MACOSX'] = platform == 'darwin'
+-    conf.env['IS_LINUX'] = platform == 'linux' or platform == 'linux2' or platform == 'posix'
+-    conf.env['IS_SUN'] = platform == 'sunos'
++    if Options.options.dist_target == 'auto':
++        conf.env['IS_MACOSX'] = platform == 'darwin'
++        conf.env['IS_LINUX'] = platform == 'linux' or platform == 'linux2' or platform == 'posix'
++        conf.env['IS_SUN'] = platform == 'sunos'
++    elif Options.options.dist_target == 'mingw':
++        conf.env['IS_WINDOWS'] = True
+ 
+     if conf.env['IS_LINUX']:
+         Logs.pprint('CYAN', "Linux detected")
+@@ -93,6 +99,9 @@ def configure(conf):
+     if conf.env['IS_SUN']:
+         Logs.pprint('CYAN', "SunOS detected")
+ 
++    if conf.env['IS_WINDOWS']:
++        Logs.pprint('CYAN', "Windows detected")
++
+     if conf.env['IS_LINUX']:
+         conf.check_tool('compiler_cxx')
+         conf.check_tool('compiler_cc')
+@@ -109,6 +118,12 @@ def configure(conf):
+     #if conf.env['IS_SUN']:
+     #   conf.check_tool('compiler_cxx')
+     #   conf.check_tool('compiler_cc')
++
++    if conf.env['IS_WINDOWS']:
++        conf.check_tool('compiler_cxx')
++        conf.check_tool('compiler_cc')
++        conf.env.append_unique('CCDEFINES', '_POSIX')
++        conf.env.append_unique('CXXDEFINES', '_POSIX')
+  
+     conf.env.append_unique('CXXFLAGS', '-Wall')
+     conf.env.append_unique('CCFLAGS', '-Wall')
+@@ -125,6 +140,11 @@ def configure(conf):
+         conf.env['BUILD_DRIVER_ALSA'] = Options.options.alsa
+         conf.env['BUILD_DRIVER_FFADO'] = Options.options.firewire
+         conf.env['BUILD_DRIVER_FREEBOB'] = Options.options.freebob
++    if conf.env['IS_WINDOWS']:
++        conf.sub_config('windows')
++        if Options.options.portaudio and not conf.env['BUILD_DRIVER_PORTAUDIO']:
++            conf.fatal('Portaudio driver was explicitly requested but cannot be built')
++        conf.env['BUILD_DRIVER_WINMME'] = Options.options.winmme
+     if Options.options.dbus:
+         conf.sub_config('dbus')
+         if conf.env['BUILD_JACKDBUS'] != True:
+@@ -185,6 +205,8 @@ def configure(conf):
+     else:
+         conf.env['BUILD_JACKD'] = True
+ 
++    conf.env['BINDIR'] = conf.env['PREFIX'] + '/bin'
++
+     if Options.options.libdir:
+         conf.env['LIBDIR'] = conf.env['PREFIX'] + Options.options.libdir
+     else:
+@@ -203,10 +225,20 @@ def configure(conf):
+     conf.define('CLIENT_NUM', Options.options.clients)
+     conf.define('PORT_NUM_FOR_CLIENT', Options.options.application_ports)
+ 
+-    conf.env['ADDON_DIR'] = os.path.normpath(os.path.join(conf.env['LIBDIR'], 'jack'))
+-    conf.define('ADDON_DIR', conf.env['ADDON_DIR'])
+-    conf.define('JACK_LOCATION', os.path.normpath(os.path.join(conf.env['PREFIX'], 'bin')))
+-    conf.define('USE_POSIX_SHM', 1)
++    if conf.env['IS_WINDOWS']:
++        # we define this in the environment to maintain compatability with
++        # existing install paths that use ADDON_DIR rather than have to
++        # have special cases for windows each time.
++        conf.env['ADDON_DIR'] = conf.env['BINDIR'] + '/jack'
++        # don't define ADDON_DIR in config.h, use the default 'jack' defined in
++        # windows/JackPlatformPlug_os.h
++    else:
++        conf.env['ADDON_DIR'] = os.path.normpath(os.path.join(conf.env['LIBDIR'], 'jack'))
++        conf.define('ADDON_DIR', conf.env['ADDON_DIR'])
++        conf.define('JACK_LOCATION', os.path.normpath(os.path.join(conf.env['PREFIX'], 'bin')))
++
++    if not conf.env['IS_WINDOWS']:
++        conf.define('USE_POSIX_SHM', 1)
+     conf.define('JACKMP', 1)
+     if conf.env['BUILD_JACKDBUS'] == True:
+         conf.define('JACK_DBUS', 1)
+@@ -273,6 +305,10 @@ def configure(conf):
+         display_feature('Build with ALSA support', conf.env['BUILD_DRIVER_ALSA'] == True)
+         display_feature('Build with FireWire (FreeBob) support', conf.env['BUILD_DRIVER_FREEBOB'] == True)
+         display_feature('Build with FireWire (FFADO) support', conf.env['BUILD_DRIVER_FFADO'] == True)
++
++    if conf.env['IS_WINDOWS']:
++        display_feature('Build with WinMME support', conf.env['BUILD_DRIVER_WINMME'] == True)
++        display_feature('Build with Portaudio support', conf.env['BUILD_DRIVER_PORTAUDIO'] == True)
+        
+     if conf.env['BUILD_JACKDBUS'] == True:
+         display_msg('D-Bus service install directory', conf.env['DBUS_SERVICES_DIR'], 'CYAN')
+@@ -321,6 +357,11 @@ def build(bld):
+         if bld.env['BUILD_JACKDBUS'] == True:
+             bld.add_subdirs('dbus')
+ 
++    if bld.env['IS_WINDOWS']:
++        bld.add_subdirs('windows')
++        #bld.add_subdirs('example-clients')
++        #bld.add_subdirs('tests')
++
+     if bld.env['BUILD_DOXYGEN_DOCS'] == True:
+         share_dir = bld.env.get_destdir() + bld.env['PREFIX'] + '/share/jack-audio-connection-kit'
+         html_docs_source_dir = "build/default/html"
+-- 
+1.7.7.6
+
