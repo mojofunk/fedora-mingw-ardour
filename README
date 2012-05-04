@@ -7,6 +7,16 @@ are preceded by a *
 The packages contained in this repository are all the packages that
 have not yet been included in Fedora.
 
+The Sources for these packages are not included in this repository
+and have to be downloaded separately and put in the SOURCES directory
+of the rpmbuild root.
+
+The ~/.rpmmacros file is used to set the path to the rpmbuild root
+dir, rather than the default ~/rpmbuild
+
+Jack2 is the only package that requires an unreleased version from
+https://github.com/jackaudio/jack2.git
+
 *wine, needed to run some tests during the configure process
 
 *mingw32-gcc
