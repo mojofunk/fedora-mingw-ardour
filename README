@@ -34,13 +34,7 @@ mingw32-portaudio
 
 mingw32-jack-audio-connection-kit
 
-mingw32-ladspa
-
 mingw32-fftw
-
-*mingw32-libxslt
-mingw32-raptor <- requires libxslt
-mingw32-liblrdf <- requires raptor,ladspa
 
 *mingw32-curl
 
