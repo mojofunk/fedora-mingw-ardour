@@ -1,7 +1,7 @@
 %{?mingw_package_header}
 	
 %global mingw_build_win32 1
-%global mingw_build_win64 1
+%global mingw_build_win64 0
 
 %global mingw_pkg_name jack-audio-connection-kit
 
@@ -153,7 +153,7 @@ done
 popd
 
 # now copy
-for dir in win32 win64; do
+for dir in win32; do
 	cp -a jack-%{version} $dir
 done
 rm -rf jack-%{version}
@@ -202,7 +202,7 @@ popd
 %{mingw32_bindir}/jack*.dll
 %{mingw32_bindir}/jack_*.exe
 %{mingw32_libdir}/pkgconfig/jack.pc
-%{_mingw32_libdir}/libaudioadapter.dll.a
+%{mingw32_libdir}/libaudioadapter.dll.a
 %{mingw32_libdir}/libdummy.dll.a
 %{mingw32_libdir}/libjack.dll.a
 %{mingw32_libdir}/libjackserver.dll.a
