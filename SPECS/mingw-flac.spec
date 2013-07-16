@@ -6,23 +6,14 @@
 %global mingw_pkg_name flac
 
 Name:           mingw-flac
-Version:        1.2.1
-Release:        2%{?dist}
+Version:        1.3.0
+Release:        1%{?dist}
 Summary:        Free Lossless Audio Codec Library
 
-License:        BSD 3-Clause
-URL:            http://flac.sourceforge.net
-Source0:        http://dl.sourceforge.net/sourceforge/flac/flac-%{version}.tar.gz
-Patch0:         flac-1.2.1-no_undefined.patch
-#Patch1:         flac-1.2.1-asm.patch
-#Patch2:         flac-1.2.1-gcc43.patch
-#Patch3:         flac-1.2.1-hidesyms.patch
-Patch4:         flac-1.2.1-tests.patch
-Patch5:         flac-1.2.1-cflags.patch
-#Patch6:         flac-1.2.1-bitreader.patch
-Patch7:         flac-1.2.1-automake-1.8.patch
-Patch8:         flac-1.2.1-nodocs.patch
-#Patch1:         flac-1.2.1-wsocklibs.patch
+License: BSD and GPLv2+ and GFDL
+Source0: http://downloads.xiph.org/releases/flac/flac-%{version}.tar.xz
+URL: http://www.xiph.org/flac/
+Patch8:         flac-1.3.0-nodocs.patch
 Group:          Development/Libraries
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -123,23 +114,15 @@ Static cross compiled version of the FLAC C++ library.
 %prep
 %setup -q -n flac-%{version}
 
-%patch0 -p1 -b .no_undefined
-##%patch1 -p1 -b .asm
-##%patch2 -p1 -b .gcc43
-##%patch3 -p1 -b .hidesyms
-# reduce number of tests
-%patch4 -p1 -b .tests
-%patch5 -p1 -b .cflags
-%patch7 -p0 -b .automake-1.8
 %patch8 -p0 -b .nodocs
-##%patch6 -p0 -b .bitreader
-
-#%patch1 -p1 -b .wsocklibs
 
 
 %build
 ./autogen.sh -V
-%mingw_configure --enable-shared --enable-static
+%mingw_configure --enable-shared --enable-static \
+    --disable-xmms-plugin \
+    --disable-silent-rules \
+    --disable-thorough-tests \
 %mingw_make %{?_smp_mflags}
 
 
@@ -202,6 +185,9 @@ find $RPM_BUILD_ROOT -name '*.la' -delete
 
 
 %changelog
+* Tue Jul 16 2013 Tim Mayberry <mojofunk@gmail.com> - 1.3.0-1
+- Update to flac version in F19
+
 * Sat Jun 30 2012 Tim Mayberry <mojofunk@gmail.com> - 1.2.1-2
 - Update spec file to F17 MinGW package guidelines
 
