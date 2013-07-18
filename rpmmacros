@@ -1,1 +1,1 @@
-%_topdir %(echo $HOME)/devel/github/fedora-mingw-ardour
+%_topdir %(echo $HOME)/Data/devel/github/fedora-mingw-ardour
