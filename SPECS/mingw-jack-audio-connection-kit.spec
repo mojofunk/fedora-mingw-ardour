@@ -8,7 +8,7 @@
 Summary:       The Jack Audio Connection Kit
 Name:          mingw-jack-audio-connection-kit
 Version:       1.9.9
-Release:       1%{?dist}
+Release:       2%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -164,6 +164,9 @@ pushd win32
 	export PREFIX=%{mingw32_prefix}
 
 	%{mingw32_env}
+	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
+	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
+
 	./waf configure --debug --dist-target=mingw \
 		--portaudio --winmme
 
@@ -243,6 +246,9 @@ popd
 
 
 %changelog
+* Fri Jul 19 2013 Tim Mayberry <mojofunk@gmail.com> - 1.9.9-2
+- Fix for Fedora 19 relating to pkgconfig
+
 * Sun Jul 1 2012 Tim Mayberry <mojofunk@gmail.com> - 1.9.9-1
 - Update to Fedora 17 MinGW package guidelines
 - Disable 64 bit build due to portaudio 64 bit issue
