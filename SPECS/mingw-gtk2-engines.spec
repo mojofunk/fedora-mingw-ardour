@@ -8,7 +8,7 @@
 Summary:        Theme engines for GTK+ 2.0
 Name:           mingw-gtk2-engines
 Version:        2.20.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 # for details on which engines are GPL vs LGPL, see COPYING
 License:        LGPLv2+
 Group:          System Environment/Libraries
@@ -117,11 +117,11 @@ find $RPM_BUILD_ROOT%{mingw32_libdir} -name '*.la' -delete
 # sanitize permissions
 find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -type d -exec chmod 755 {} \;
 find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -type f -name "*.png" -exec chmod 644 {} \;
-find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -name "gtkrc*" -perm +111 -exec chmod 644 {} \;
+find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -name "gtkrc*" -perm /111 -exec chmod 644 {} \;
 
 #find $RPM_BUILD_ROOT%{mingw64_datadir}/themes -type d -exec chmod 755 {} \;
 #find $RPM_BUILD_ROOT%{mingw64_datadir}/themes -type f -name "*.png" -exec chmod 644 {} \;
-#find $RPM_BUILD_ROOT%{mingw64_datadir}/themes -name "gtkrc*" -perm +111 -exec chmod 644 {} \;
+#find $RPM_BUILD_ROOT%{mingw64_datadir}/themes -name "gtkrc*" -perm /111 -exec chmod 644 {} \;
 
 %mingw_find_lang %{name} --all-name
 
@@ -174,6 +174,9 @@ find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -name "gtkrc*" -perm +111 -exec ch
 #%{mingw64_libdir}/gtk-2.0/2.10.0/engines/*.a
 
 %changelog
+* Fri Jul 26 2013 Tim Mayberry <mojofunk@gmail.com> - 2.20.2-3
+- Fix command used to reset perms for F19
+
 * Sat Jun 30 2012 Tim Mayberry <mojofunk@gmail.com> - 2.20.2-2
 - Update to Fedora 17 MinGW package guidelines
 - disable 64 bit build, due to libtool issue
