@@ -1,9 +1,6 @@
 This is a rough list of library dependencies for building Ardour
 for windows using the MinGW compiler on Fedora
  
-MinGW Fedora Packages that are already packaged and part of Fedora
-are preceded by a -
-
 The packages contained in this repository are all the packages that
 have not yet been included in Fedora.
 
@@ -11,50 +8,72 @@ The Sources for these packages are not included in this repository
 and have to be downloaded separately and put in the SOURCES directory
 of the rpmbuild root.
 
+These packages should use the versions that are in the native Fedora
+packages so an easy way to download the correct sources is with
+yumdownloader and then extract the source from the package
+
+e.g $yumdownloader --source flac
+
 The ~/.rpmmacros file is used to set the path to the rpmbuild root
 dir, rather than the default ~/rpmbuild
 
 Jack2 is the only package that requires an unreleased version from
 https://github.com/jackaudio/jack2.git
 
-- wine, needed to run some tests during the configure process
+These packages should be built and or installed in this order:
 
-- mingw*-gcc
+install wine, needed to run some tests during the configure process
 
-- mingw*-gcc-c++
+install mingw*-gcc
 
-- mingw*-libogg
+install mingw*-gcc-c++
 
-build mingw-flac <- requires libogg
+install mingw*-libogg
 
-- mingw*-libvorbis
+yum group install 'Developement Tools'
+yum group install 'RPM Developement Tools'
 
-build mingw-libsndfile <- requires flac, vorbis
-build mingw-libsamplerate <- requires sndfile for examples?
+install mingw*pkg-config
 
-- mingw*-gtkmm24, this will pull in all the gtk+ deps etc
+build/install mingw-flac <- requires libogg
 
-build mingw-gtk2-engines <- provides clearlooks
+install mingw*-libvorbis
 
-- mingw*-libglade2, required for gnomecanvas
+build/install mingw-libsndfile <- requires flac, vorbis
+build/install mingw-libsamplerate <- requires sndfile for examples?
 
-build mingw-libart_lgpl
-build mingw-libgnomecanvas <- requires libart, libglade2
-build mingw-libgnomecanvasmm
+install mingw*-gtkmm24, this will pull in all the gtk+ deps etc
 
-build mingw-portaudio
+install intltool
 
-build mingw-jack-audio-connection-kit
+build/install mingw-gtk2-engines <- provides clearlooks
 
-build mingw-fftw
+install mingw*-libglade2, required for gnomecanvas
 
-- mingw*-boost
+build/install mingw-libart_lgpl
+build/install mingw-libgnomecanvas <- requires libart, libglade2
+build/install mingw-libgnomecanvasmm
 
-- mingw*-curl
+build/install mingw-portaudio
+
+install mingw*pthreads
+install mingw*libgnurx
+
+build/install mingw-jack-audio-connection-kit
+
+install gcc-gfortran
+
+build/install mingw-fftw
+
+build/install mingw-liblo
+
+install mingw*-boost
+
+install mingw*-curl
 
 Optional
 
-- mingw*-cppunit, if tests enabled
-- mingw*-gdb, for debugging
+build/install mingw*-cppunit, if tests enabled
+install mingw*-gdb, for debugging
 
-- qemu-kvm to run virt images
+install qemu-kvm to run virt images
