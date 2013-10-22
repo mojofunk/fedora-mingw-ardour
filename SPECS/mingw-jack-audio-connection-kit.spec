@@ -7,17 +7,17 @@
 
 Summary:       The Jack Audio Connection Kit
 Name:          mingw-jack-audio-connection-kit
-Version:       1.9.9
-Release:       2%{?dist}
+Version:       1.9.10
+Release:       1%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
 URL:           http://www.jackaudio.org
 Source0:       http://www.grame.fr/~letz/jack-%{version}.tar.bz2
-Patch0:        jack-1.9.9-mingw-waf.patch
-patch1:        jack-1.9.9-SHGFP_CURRENT_TYPE-mingw.patch
-patch2:        jack-1.9.9-portaudio-no-asio.patch
-Patch3:        jack-1.9.9-example-clients.patch
+Patch1:        jack-1.9.10-client-shutdown-api-fix.patch
+Patch0:        jack-1.9.10-mingw-waf.patch
+Patch2:        jack-1.9.10-portaudio-no-asio.patch
+Patch3:        jack-1.9.10-example-clients.patch
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -138,8 +138,8 @@ Small example clients that use the Jack Audio Connection Kit.
 
 pushd jack-%{version}
 
-%patch0 -p1 -b .mingw
-%patch1 -p1 -b .shgfp
+%patch0 -p1 -b .csdapi
+%patch1 -p1 -b .mingw
 %patch2 -p1 -b .noasio
 %patch3 -p1 -b .examples
 
@@ -246,6 +246,9 @@ popd
 
 
 %changelog
+* Tue Jul 23 2013 Tim Mayberry <mojofunk@gmail.com> - 1.9.10-1
+- Update to 1.9.10 git rev 851413589
+
 * Fri Jul 19 2013 Tim Mayberry <mojofunk@gmail.com> - 1.9.9-2
 - Fix for Fedora 19 relating to pkgconfig
 
