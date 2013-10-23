@@ -6,14 +6,12 @@
 %bcond_with doc
 %global apidocdir __api-doc_fedora
 
-%global snap 20130218git
-
 Name:       mingw-%{_basename}	
 Summary:    Audio Meta-Data Library
-Version:    1.8
-Release:    3.%{snap}%{?dist}
+Version:    1.9.1
+Release:    1%{?dist}
 
-License:    LGPLv2
+License:    LGPLv2 and MPL
 #URL:       http://launchpad.net/taglib
 URL:        http://taglib.github.com/
 %if 0%{?snap:1}
@@ -141,6 +139,10 @@ find %{apidocdir} -name '*.md5' | xargs rm -fv
 
 
 %changelog
+* Wed Oct 23 2013 Tim Mayberry <mojofunk@gmail.com> 1.9.1-1
+- Update to version 1.9.1
+- License: +MPL
+
 * Fri Aug 2 2013 Tim Mayberry <mojofunk@gmail.com> 1.8-3.20130218git
 - Updated to version in Fedora 19
 
