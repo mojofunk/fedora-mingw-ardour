@@ -1,0 +1,405 @@
+From 20e42b7235c829a090e4ab2e590639690fd55cce Mon Sep 17 00:00:00 2001
+From: Tim Mayberry <mojofunk@gmail.com>
+Date: Mon, 30 Apr 2012 18:48:13 +1000
+Subject: [PATCH 4/4] Changes to get example-clients to build using MinGW
+ compiler
+
+---
+ example-clients/bufsize.c               |  4 +++-
+ example-clients/capture_client.c        |  8 ++++++--
+ example-clients/evmon.c                 | 13 +++++++------
+ example-clients/freewheel.c             |  4 +++-
+ example-clients/midiseq.c               | 14 ++++++++++----
+ example-clients/midisine.c              | 13 ++++++++++---
+ example-clients/monitor_client.c        |  5 +++++
+ example-clients/samplerate.c            |  4 +++-
+ example-clients/session_notify.c        |  5 ++++-
+ example-clients/showtime.c              |  6 +++++-
+ example-clients/simple_session_client.c |  6 +++++-
+ example-clients/wait.c                  |  4 ++++
+ example-clients/wscript                 | 13 +++++++++----
+ example-clients/zombie.c                | 14 +++++++++++---
+ wscript                                 |  2 +-
+ 15 files changed, 86 insertions(+), 29 deletions(-)
+
+diff --git a/example-clients/bufsize.c b/example-clients/bufsize.c
+index 771fd5a..1c89bc7 100644
+--- a/example-clients/bufsize.c
++++ b/example-clients/bufsize.c
+@@ -95,9 +95,11 @@ int main(int argc, char *argv[])
+ 		exit(1);
+ 	}
+ 
++#ifndef WIN32
+ 	signal(SIGQUIT, signal_handler);
+-	signal(SIGTERM, signal_handler);
+ 	signal(SIGHUP, signal_handler);
++#endif
++	signal(SIGTERM, signal_handler);
+ 	signal(SIGINT, signal_handler);
+ 
+ 	jack_on_shutdown(client, jack_shutdown, 0);
+diff --git a/example-clients/capture_client.c b/example-clients/capture_client.c
+index 559dc07..d3360b4 100644
+--- a/example-clients/capture_client.c
++++ b/example-clients/capture_client.c
+@@ -29,6 +29,8 @@
+ #include <pthread.h>
+ #include <signal.h>
+ #include <getopt.h>
++#include <inttypes.h>
++
+ #include <jack/jack.h>
+ #include <jack/ringbuffer.h>
+ 
+@@ -334,9 +336,11 @@ main (int argc, char *argv[])
+ 	setup_ports (argc - optind, &argv[optind], &thread_info);
+ 
+      /* install a signal handler to properly quits jack client */
+-    signal(SIGQUIT, signal_handler);
+-	signal(SIGTERM, signal_handler);
++#ifndef WIN32
++	signal(SIGQUIT, signal_handler);
+ 	signal(SIGHUP, signal_handler);
++#endif
++	signal(SIGTERM, signal_handler);
+ 	signal(SIGINT, signal_handler);
+ 
+ 	run_disk_thread (&thread_info);
+diff --git a/example-clients/evmon.c b/example-clients/evmon.c
+index 67a75e9..92faf1d 100644
+--- a/example-clients/evmon.c
++++ b/example-clients/evmon.c
+@@ -97,18 +97,19 @@ main (int argc, char *argv[])
+ 		return 1;
+ 	}
+     
+-#ifdef WIN32
++#ifndef WIN32
+ 	signal(SIGINT, signal_handler);
+-    signal(SIGABRT, signal_handler);
+-	signal(SIGTERM, signal_handler);
+-#else
+ 	signal(SIGQUIT, signal_handler);
+-	signal(SIGTERM, signal_handler);
+ 	signal(SIGHUP, signal_handler);
+-	signal(SIGINT, signal_handler);
+ #endif
++	signal(SIGABRT, signal_handler);
++	signal(SIGTERM, signal_handler);
+ 
++#ifdef WIN32
++	Sleep(INFINITE);
++#else
+ 	sleep (-1);
++#endif
+ 	exit (0);
+ }
+ 
+diff --git a/example-clients/freewheel.c b/example-clients/freewheel.c
+index a59a8ce..005b3bb 100644
+--- a/example-clients/freewheel.c
++++ b/example-clients/freewheel.c
+@@ -69,9 +69,11 @@ main (int argc, char *argv[])
+ 		exit(1);
+ 	}
+ 
++#ifndef WIN32
+ 	signal (SIGQUIT, signal_handler);
+-	signal (SIGTERM, signal_handler);
+ 	signal (SIGHUP, signal_handler);
++#endif
++	signal (SIGTERM, signal_handler);
+ 	signal (SIGINT, signal_handler);
+ 
+ 	jack_on_shutdown (client, jack_shutdown, 0);
+diff --git a/example-clients/midiseq.c b/example-clients/midiseq.c
+index bc0591b..1fc779e 100644
+--- a/example-clients/midiseq.c
++++ b/example-clients/midiseq.c
+@@ -118,15 +118,21 @@ int main(int narg, char **args)
+ 		return 1;
+ 	}
+ 
+-    /* install a signal handler to properly quits jack client */
+-    signal(SIGQUIT, signal_handler);
+-	signal(SIGTERM, signal_handler);
++	/* install a signal handler to properly quits jack client */
++#ifndef WIN32
++	signal(SIGQUIT, signal_handler);
+ 	signal(SIGHUP, signal_handler);
++#endif
++	signal(SIGTERM, signal_handler);
+ 	signal(SIGINT, signal_handler);
+ 
+-    /* run until interrupted */
++	/* run until interrupted */
+ 	while (1) {
++#ifdef WIN32
++		Sleep(1*1000);
++#else
+ 		sleep(1);
++#endif
+ 	};
+ 
+     jack_client_close(client);
+diff --git a/example-clients/midisine.c b/example-clients/midisine.c
+index 75e9b1e..4a00c42 100644
+--- a/example-clients/midisine.c
++++ b/example-clients/midisine.c
+@@ -23,6 +23,7 @@
+ #include <string.h>
+ #include <signal.h>
+ #include <math.h>
++#include <inttypes.h>
+ 
+ #include <jack/jack.h>
+ #include <jack/midiport.h>
+@@ -140,15 +141,21 @@ int main(int narg, char **args)
+ 		return 1;
+ 	}
+ 
+-    /* install a signal handler to properly quits jack client */
+-    signal(SIGQUIT, signal_handler);
+-	signal(SIGTERM, signal_handler);
++	/* install a signal handler to properly quits jack client */
++#ifndef WIN32
++	signal(SIGQUIT, signal_handler);
+ 	signal(SIGHUP, signal_handler);
++#endif
++	signal(SIGTERM, signal_handler);
+ 	signal(SIGINT, signal_handler);
+ 
+ 	/* run until interrupted */
+ 	while(1) {
++#ifdef WIN32
++		Sleep(1*1000);
++#else
+ 		sleep(1);
++#endif
+ 	}
+ 	jack_client_close(client);
+ 	exit (0);
+diff --git a/example-clients/monitor_client.c b/example-clients/monitor_client.c
+index 36f61d6..b9a2761 100644
+--- a/example-clients/monitor_client.c
++++ b/example-clients/monitor_client.c
+@@ -51,7 +51,12 @@ main (int argc, char *argv[])
+ 		jack_client_close (client);
+ 		return 1;
+ 	}
++
++#ifdef WIN32
++	Sleep (30*1000);
++#else
+ 	sleep (30);
++#endif
+ 	if (jack_port_request_monitor_by_name (client, argv[1], FALSE)) {
+ 		fprintf (stderr, "could not disable monitoring for %s\n", argv[1]);
+ 	}
+diff --git a/example-clients/samplerate.c b/example-clients/samplerate.c
+index fd258a0..88b5c31 100644
+--- a/example-clients/samplerate.c
++++ b/example-clients/samplerate.c
+@@ -70,9 +70,11 @@ int main(int argc, char *argv[])
+ 		exit(1);
+ 	}
+ 
++#ifndef WIN32
+ 	signal(SIGQUIT, signal_handler);
+-	signal(SIGTERM, signal_handler);
+ 	signal(SIGHUP, signal_handler);
++#endif
++	signal(SIGTERM, signal_handler);
+ 	signal(SIGINT, signal_handler);
+ 
+ 	jack_on_shutdown(client, jack_shutdown, 0);
+diff --git a/example-clients/session_notify.c b/example-clients/session_notify.c
+index 1872d8c..435fbcd 100644
+--- a/example-clients/session_notify.c
++++ b/example-clients/session_notify.c
+@@ -130,9 +130,12 @@ int main(int argc, char *argv[])
+ 		exit(1);
+ 	}
+ 
++#ifndef WIN32
+ 	signal(SIGQUIT, signal_handler);
+-	signal(SIGTERM, signal_handler);
+ 	signal(SIGHUP, signal_handler);
++#endif
++
++	signal(SIGTERM, signal_handler);
+ 	signal(SIGINT, signal_handler);
+ 
+ 	jack_on_shutdown(client, jack_shutdown, 0);
+diff --git a/example-clients/showtime.c b/example-clients/showtime.c
+index 0b421e7..eba5777 100644
+--- a/example-clients/showtime.c
++++ b/example-clients/showtime.c
+@@ -19,6 +19,7 @@
+ #include <unistd.h>
+ #include <signal.h>
+ #include <stdlib.h>
++#include <inttypes.h>
+ 
+ #include <jack/jack.h>
+ #include <jack/transport.h>
+@@ -86,9 +87,12 @@ main (int argc, char *argv[])
+ 		return 1;
+ 	}
+ 
++#ifndef WIN32
+ 	signal (SIGQUIT, signal_handler);
+-	signal (SIGTERM, signal_handler);
+ 	signal (SIGHUP, signal_handler);
++#endif
++
++	signal (SIGTERM, signal_handler);
+ 	signal (SIGINT, signal_handler);
+ 
+ 	/* tell the JACK server to call `jack_shutdown()' if
+diff --git a/example-clients/simple_session_client.c b/example-clients/simple_session_client.c
+index 8d06127..67a7cbd 100644
+--- a/example-clients/simple_session_client.c
++++ b/example-clients/simple_session_client.c
+@@ -10,6 +10,7 @@
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <inttypes.h>
+ 
+ #include <jack/jack.h>
+ #include <jack/types.h>
+@@ -194,8 +195,11 @@ main (int argc, char *argv[])
+         /* keep running until until we get a quit event */
+ 
+         while (!simple_quit)
++#ifdef WIN32
++                Sleep(1*1000);
++#else
+                 sleep(1);
+-        
++#endif
+ 
+         jack_client_close (client);
+         exit (0);
+diff --git a/example-clients/wait.c b/example-clients/wait.c
+index 9eb1ec0..f3b9cb5 100644
+--- a/example-clients/wait.c
++++ b/example-clients/wait.c
+@@ -129,7 +129,11 @@ main(int argc, char *argv[])
+ 		}
+ 
+ 		// Wait a second, and repeat
++#ifdef WIN32
++		Sleep(1*1000);
++#else
+ 		sleep(1);
++#endif
+ 	}
+ 
+ 	exit(0);
+diff --git a/example-clients/wscript b/example-clients/wscript
+index de4b033..a73dde1 100644
+--- a/example-clients/wscript
++++ b/example-clients/wscript
+@@ -63,6 +63,8 @@ def build(bld):
+         os_incdir = ['../macosx', '../posix']
+     if bld.env['IS_SUN']:
+         os_incdir = ['../solaris', '../posix']
++    if bld.env['IS_WINDOWS']:
++        os_incdir = ['../windows']
+     for example_program, example_program_source in list(example_programs.items()):
+         if example_program == 'jack_server_control':
+             use = ['serverlib', 'STDC++']
+@@ -121,6 +123,8 @@ def build(bld):
+             prog.use += ['RT', 'SNDFILE']
+         if bld.env['IS_SUN']:
+             prog.use += ['RT', 'SNDFILE']
++	if bld.env['IS_WINDOWS']:
++            prog.uselib = ['SNDFILE']
+         prog.target = 'jack_rec'
+ 
+     if bld.env['IS_LINUX'] or bld.env['IS_MACOSX']:
+@@ -149,7 +153,8 @@ def build(bld):
+ 
+     for example_lib, example_lib_source in list(example_libs.items()):
+         lib = bld(features = 'c cshlib')
+-        lib.env['cshlib_PATTERN'] = '%s.so'
++        if not bld.env['IS_WINDOWS']:
++            lib.env['cshlib_PATTERN'] = '%s.so'
+         lib.includes = os_incdir + ['../common/jack', '../common']
+         lib.target = example_lib
+         lib.source = example_lib_source
+@@ -162,6 +167,6 @@ def build(bld):
+         lib.use = 'serverlib'
+         lib.install_path = '${ADDON_DIR}/'
+ 
+-    bld.symlink_as('${PREFIX}/bin/jack_disconnect', 'jack_connect')
+-
+-    bld.install_files('${PREFIX}/bin', 'jack_control', chmod=0o755)
++    if not bld.env['IS_WINDOWS']:
++        bld.symlink_as('${PREFIX}/bin/jack_disconnect', 'jack_connect')
++        bld.install_files('${PREFIX}/bin', 'jack_control', chmod=0o755)
+diff --git a/example-clients/zombie.c b/example-clients/zombie.c
+index c982cfa..4ba9692 100644
+--- a/example-clients/zombie.c
++++ b/example-clients/zombie.c
+@@ -35,14 +35,18 @@ process(jack_nframes_t nframes, void* arg)
+ 	if (count++ == 1000) {
+         printf("process block\n");
+         //while (1) {}
+-        sleep(1);
++#if WIN32
++	Sleep(1*1000);
++#else
++	sleep(1);
++#endif
+     }
+ 
+     return 0;
+ }
+ 
+ static void
+-shutdown (void *arg)
++shutdown_handler (void *arg)
+ {
+     printf("shutdown \n");
+     running = 0;
+@@ -59,7 +63,7 @@ main (int argc, char *argv[])
+ 	}
+ 
+     jack_set_process_callback (client, process, NULL);
+-    jack_on_shutdown(client, shutdown, NULL);
++    jack_on_shutdown(client, shutdown_handler, NULL);
+     output_port = jack_port_register (client, "port1", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+ 
+ 	/* tell the JACK server that we are ready to roll */
+@@ -71,7 +75,11 @@ main (int argc, char *argv[])
+     jack_connect(client, jack_port_name(output_port), "coreaudio:Built-in Audio:in2");
+ 
+     while (running) {
++#if WIN32
++        Sleep(1*1000);
++#else
+         sleep(1);
++#endif
+         printf ("run\n");
+     }
+ 
+diff --git a/wscript b/wscript
+index 8edc89d..b27baae 100644
+--- a/wscript
++++ b/wscript
+@@ -395,7 +395,7 @@ def build(bld):
+ 
+     if bld.env['IS_WINDOWS']:
+         bld.add_subdirs('windows')
+-        #bld.add_subdirs('example-clients')
++        bld.add_subdirs('example-clients')
+         #bld.add_subdirs('tests')
+ 
+     if bld.env['BUILD_DOXYGEN_DOCS'] == True:
+-- 
+1.8.3.1
+
