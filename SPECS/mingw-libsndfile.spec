@@ -7,7 +7,7 @@
 
 Name:		mingw-libsndfile
 Version:	1.0.25
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	Library for reading and writing sound files
 License:	LGPLv2+
 Group:		System Environment/Libraries
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_mandir}
 
 
 %changelog
+* Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> - 1.0.25-3
+- Rebuild for F20
+
 * Sat Jun 30 2012 Tim Mayberry <mojofunk@gmail.com> - 1.0.25-2
 - Update spec file to F17 package guidelines
 
