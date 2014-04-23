@@ -8,7 +8,7 @@
 Summary:	MinGW Windows Sample rate conversion library for audio data
 Name:		mingw-libsamplerate
 Version:	0.1.8
-Release:	2%{?dist}
+Release:	3%{?dist}
 License:	GPLv2+
 Group:		System Environment/Libraries
 URL:		http://www.mega-nerd.com/SRC/
@@ -128,6 +128,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_mandir}
 %{mingw64_libdir}/libsamplerate.a
 
 %changelog
+* Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> - 0.1.8-3
+- Rebuild for Fedora 20
+
 * Sat Jun 30 2012 Tim Mayberry <mojofunk@gmail.com> - 0.1.8-2
 - Update spec for F17 MinGW package guidelines
 
