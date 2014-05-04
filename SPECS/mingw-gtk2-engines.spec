@@ -8,7 +8,7 @@
 Summary:        Theme engines for GTK+ 2.0
 Name:           mingw-gtk2-engines
 Version:        2.20.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 # for details on which engines are GPL vs LGPL, see COPYING
 License:        LGPLv2+
 Group:          System Environment/Libraries
@@ -127,9 +127,7 @@ find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -name "gtkrc*" -perm /111 -exec ch
 
 
 %files -n mingw32-%{mingw_pkg_name} -f mingw32-%{name}.lang 
-#%defattr(644, root, root, 755)
 %doc README AUTHORS NEWS COPYING
-#%attr (755, root, root) %{mingw32_libdir}/gtk-2.0/2.10.0/engines/*.dll
 %{mingw32_libdir}/gtk-2.0/2.10.0/engines/libclearlooks.dll
 %{mingw32_libdir}/gtk-2.0/2.10.0/engines/libclearlooks.dll.a
 %{mingw32_libdir}/gtk-2.0/2.10.0/engines/libcrux-engine.dll
@@ -150,16 +148,6 @@ find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -name "gtkrc*" -perm /111 -exec ch
 %{mingw32_datadir}/gtk-engines
 %{mingw32_libdir}/pkgconfig/gtk-engines-2.pc
 
-#%files -n mingw64-%{mingw_pkg_name} -f mingw64-%{name}.lang 
-#%defattr(644, root, root, 755)
-#%doc README AUTHORS NEWS COPYING
-#%attr (755, root, root) %{mingw64_libdir}/gtk-2.0/2.10.0/engines/*.dll
-#%{mingw64_libdir}/gtk-2.0/2.10.0/engines/*.dll
-#%{mingw64_libdir}/gtk-2.0/2.10.0/engines/*.dll.a
-#%{mingw64_datadir}/themes/*
-#%{mingw64_datadir}/gtk-engines
-#%{mingw64_libdir}/pkgconfig/gtk-engines-2.pc
-
 %files -n mingw32-%{mingw_pkg_name}-static
 %{mingw32_libdir}/gtk-2.0/2.10.0/engines/libclearlooks.a
 %{mingw32_libdir}/gtk-2.0/2.10.0/engines/libcrux-engine.a
@@ -170,10 +158,10 @@ find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -name "gtkrc*" -perm /111 -exec ch
 %{mingw32_libdir}/gtk-2.0/2.10.0/engines/libredmond95.a
 %{mingw32_libdir}/gtk-2.0/2.10.0/engines/libthinice.a
 
-#%files -n mingw64-%{mingw_pkg_name}-static
-#%{mingw64_libdir}/gtk-2.0/2.10.0/engines/*.a
-
 %changelog
+* Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> - 2.20.2-4
+- Rebuild for F20
+
 * Fri Jul 26 2013 Tim Mayberry <mojofunk@gmail.com> - 2.20.2-3
 - Fix command used to reset perms for F19
 
