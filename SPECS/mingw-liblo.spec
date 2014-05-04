@@ -1,10 +1,10 @@
 %{?mingw_package_header}
 
-%global mingw_pkg_name liblo
+%global native_pkg_name liblo
 
-Name:         mingw-liblo
+Name:         mingw-%{native_pkg_name}
 Version:      0.27
-Release:      1%{?dist}
+Release:      2%{?dist}
 Summary:      Open Sound Control library
 License:      LGPLv2+
 Group:        System Environment/Libraries
@@ -26,38 +26,38 @@ BuildRequires: doxygen
 liblo is an implementation of the Open Sound Control protocol for
 POSIX systems developed by Steve Harris.
 
-%package -n mingw32-%{mingw_pkg_name}
+%package -n mingw32-%{native_pkg_name}
 Summary:        %{summary}
 Summary:        Libraries, includes, etc to develop liblo applications
 Group:          Development/Libraries
 
-%description -n mingw32-%{mingw_pkg_name}
+%description -n mingw32-%{native_pkg_name}
 liblo is an implementation of the Open Sound Control protocol for
 POSIX systems developed by Steve Harris.
 
-%package -n mingw32-%{mingw_pkg_name}-static
+%package -n mingw32-%{native_pkg_name}-static
 Summary:        Static cross compiled version of the Liblo library
-Requires:       mingw32-%{mingw_pkg_name} = %{version}-%{release}
+Requires:       mingw32-%{native_pkg_name} = %{version}-%{release}
 Group:          Development/Libraries
 
-%description -n mingw32-%{mingw_pkg_name}-static
+%description -n mingw32-%{native_pkg_name}-static
 Static cross compiled version of the Liblo library.
 
-%package -n mingw64-%{mingw_pkg_name}
+%package -n mingw64-%{native_pkg_name}
 Summary:        %{summary}
 Summary:        Libraries, includes, etc to develop liblo applications
 Group:          Development/Libraries
 
-%description -n mingw64-%{mingw_pkg_name}
+%description -n mingw64-%{native_pkg_name}
 liblo is an implementation of the Open Sound Control protocol for
 POSIX systems developed by Steve Harris.
 
-%package -n mingw64-%{mingw_pkg_name}-static
+%package -n mingw64-%{native_pkg_name}-static
 Summary:        Static cross compiled version of the Liblo library
-Requires:       mingw64-%{mingw_pkg_name} = %{version}-%{release}
+Requires:       mingw64-%{native_pkg_name} = %{version}-%{release}
 Group:          Development/Libraries
 
-%description -n mingw64-%{mingw_pkg_name}-static
+%description -n mingw64-%{native_pkg_name}-static
 Static cross compiled version of the Liblo library.
 
 
@@ -65,7 +65,7 @@ Static cross compiled version of the Liblo library.
 
 
 %prep
-%setup -q -n liblo-%{version}
+%setup -q -n %{native_pkg_name}-%{version}
 
 
 %build
@@ -82,7 +82,7 @@ find $RPM_BUILD_ROOT%{mingw32_libdir} -name '*.la' -delete
 find $RPM_BUILD_ROOT%{mingw64_libdir} -name '*.la' -delete
 
 
-%files -n mingw32-%{mingw_pkg_name}
+%files -n mingw32-%{native_pkg_name}
 %doc AUTHORS ChangeLog COPYING NEWS README TODO
 %{mingw32_bindir}/liblo-7.dll
 %{mingw32_bindir}/oscdump.exe
@@ -91,10 +91,10 @@ find $RPM_BUILD_ROOT%{mingw64_libdir} -name '*.la' -delete
 %{mingw32_libdir}/liblo.dll.a
 %{mingw32_libdir}/pkgconfig/liblo.pc
 
-%files -n mingw32-%{mingw_pkg_name}-static
+%files -n mingw32-%{native_pkg_name}-static
 %{mingw32_libdir}/liblo.a
 
-%files -n mingw64-%{mingw_pkg_name}
+%files -n mingw64-%{native_pkg_name}
 %doc AUTHORS ChangeLog COPYING NEWS README TODO
 %{mingw64_bindir}/liblo-7.dll
 %{mingw64_bindir}/oscdump.exe
@@ -103,9 +103,13 @@ find $RPM_BUILD_ROOT%{mingw64_libdir} -name '*.la' -delete
 %{mingw64_libdir}/liblo.dll.a
 %{mingw64_libdir}/pkgconfig/liblo.pc
 
-%files -n mingw64-%{mingw_pkg_name}-static
+%files -n mingw64-%{native_pkg_name}-static
 %{mingw64_libdir}/liblo.a
 
 %changelog
+* Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> - 0.27-2
+- Rebuild for Fedora 20
+- Minor spec file updates
+
 * Wed Jul 17 2013 Tim Mayberry <mojofunk@gmail.com> - 0.27-1
 - Initial MinGW version for Fedora 19
