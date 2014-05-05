@@ -7,7 +7,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        2.5
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        An API for audio analysis and feature extraction plugins
 
 Group:          System Environment/Libraries
