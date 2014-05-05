@@ -1,0 +1,143 @@
+%{?mingw_package_header}
+
+%global native_pkg_name vamp-plugin-sdk
+
+%global mingw_build_win32 1
+%global mingw_build_win64 1
+
+Name:           mingw-%{native_pkg_name}
+Version:        2.5
+Release:        3%{?dist}
+Summary:        An API for audio analysis and feature extraction plugins
+
+Group:          System Environment/Libraries
+License:        BSD
+URL:            http://www.vamp-plugins.org/
+Source0:        http://code.soundsoftware.ac.uk/attachments/download/690/vamp-plugin-sdk-2.5.tar.gz
+# https://sourceforge.net/tracker/?func=detail&aid=1884043&group_id=192001&atid=939644
+Source1:        vamp-plugin-sdk-2.5-waf
+Source2:        vamp-plugin-sdk-2.5-wscript
+Patch1:         vamp-plugin-sdk-2.5-pkgconfig.patch
+
+BuildArch:     noarch
+
+BuildRequires:  mingw32-libsndfile
+BuildRequires:  mingw64-libsndfile
+
+BuildRequires: mingw32-filesystem >= 95
+BuildRequires: mingw64-filesystem >= 95
+BuildRequires: mingw32-gcc
+BuildRequires: mingw64-gcc
+BuildRequires: mingw32-binutils
+BuildRequires: mingw64-binutils
+
+BuildRequires: python
+BuildRequires: pkgconfig
+
+#Requires:
+
+%description
+Vamp is an API for C and C++ plugins that process sampled audio data
+to produce descriptive output (measurements or semantic observations).
+
+%package -n mingw32-%{native_pkg_name}
+Summary:        Development files for %{name}
+Group:          Development/Libraries
+
+%description -n mingw32-%{native_pkg_name}
+The %{name} package contains libraries and header files for
+developing applications that use %{name}.
+
+%package -n mingw64-%{native_pkg_name}
+Summary:        Development files for %{name}
+Group:          Development/Libraries
+
+%description -n mingw64-%{native_pkg_name}
+The %{name} package contains libraries and header files for
+developing applications that use %{name}.
+
+
+%{?mingw_debug_package}
+
+
+%prep
+%setup -q -c %{native_pkg_name}-%{version}
+
+%patch1 -p0 -b .pkgconf
+
+pushd %{native_pkg_name}-%{version}
+	cp %{SOURCE1} waf
+	cp %{SOURCE2} wscript
+popd
+
+for dir in win32 win64; do
+	cp -a %{native_pkg_name}-%{version} $dir
+done
+rm -rf %{native_pkg_name}-%{version}
+
+%build
+
+pushd win32
+	export PREFIX=%{mingw32_prefix}
+
+	#%{mingw32_env}
+	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
+	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
+
+	./waf configure
+
+	./waf build -j1 -v
+popd
+
+pushd win64
+	export PREFIX=%{mingw64_prefix}
+
+	#%{mingw64_env}
+	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
+	export PKG_CONFIG_LIBDIR=%{mingw64_libdir}/pkgconfig
+
+	./waf configure
+
+	./waf build -j1 -v
+popd
+
+%install
+
+pushd win32
+	./waf --destdir=$RPM_BUILD_ROOT install
+	cp -ar COPYING README examples ../
+	mv $RPM_BUILD_ROOT/%{mingw32_prefix}/bin/*.dll.a $RPM_BUILD_ROOT/%{mingw32_prefix}/lib
+popd
+
+pushd win64
+	./waf --destdir=$RPM_BUILD_ROOT install
+	cp -ar COPYING README examples ../
+	mv $RPM_BUILD_ROOT/%{mingw64_prefix}/bin/*.dll.a $RPM_BUILD_ROOT/%{mingw64_prefix}/lib
+popd
+
+%files -n mingw32-%{native_pkg_name}
+%doc COPYING README examples
+%{mingw32_includedir}/vamp/*.h
+%{mingw32_includedir}/vamp-sdk/*.h
+%{mingw32_includedir}/vamp-hostsdk/*.h
+%{mingw32_bindir}/vamp-sdk-2.dll
+%{mingw32_bindir}/vamp-hostsdk-3.dll
+%{mingw32_libdir}/libvamp*dll.a
+%{mingw32_libdir}/pkgconfig/vamp*.pc
+
+%files -n mingw64-%{native_pkg_name}
+%doc COPYING README examples
+%{mingw64_includedir}/vamp/*.h
+%{mingw64_includedir}/vamp-sdk/*.h
+%{mingw64_includedir}/vamp-hostsdk/*.h
+%{mingw64_bindir}/vamp-sdk-2.dll
+%{mingw64_bindir}/vamp-hostsdk-3.dll
+%{mingw64_libdir}/libvamp*dll.a
+%{mingw64_libdir}/pkgconfig/vamp*.pc
+
+%changelog
+* Thu Apr 24 2014 Tim Mayberry <mojofunk@gmail.com> - 2.5-3
+- Patch vamp-hostsdk pkgconfig file to remove -ldl
+
+* Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> - 2.5-2
+- Initial mingw package of 2.5 using waf build system
