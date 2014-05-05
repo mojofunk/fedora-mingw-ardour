@@ -1,0 +1,39 @@
+diff -up taglib-1.5b1/taglib-config.cmake.multilib taglib-1.5b1/taglib-config.cmake
+--- taglib-1.5b1/taglib-config.cmake.multilib	2008-01-29 19:30:00.000000000 -0600
++++ taglib-1.5b1/taglib-config.cmake	2008-02-04 08:37:38.000000000 -0600
+@@ -14,10 +14,10 @@ EOH
+ 	exit 1;
+ }
+ 
+-prefix=${CMAKE_INSTALL_PREFIX}
+-exec_prefix=${CMAKE_INSTALL_PREFIX}
+-libdir=${LIB_INSTALL_DIR}
+-includedir=${INCLUDE_INSTALL_DIR}
++taglib_prefix="`pkg-config --variable=prefix taglib`"
++taglib_cflags="`pkg-config --cflags taglib`"
++taglib_libs="`pkg-config --libs taglib`"
++taglib_version="`pkg-config --modversion taglib`"
+ 
+ flags=""
+ 
+@@ -29,16 +29,16 @@ while test $# -gt 0
+ do
+   case $1 in
+     --libs)
+-	  flags="$flags -L$libdir -ltag"
++	  flags="$flags ${taglib_libs}"
+ 	  ;;
+     --cflags)
+-	  flags="$flags -I$includedir/taglib"
++	  flags="$flags ${taglib_cflags}"
+ 	  ;;
+     --version)
+-	  echo 1.5
++	  echo ${taglib_version} 
+ 	  ;;
+     --prefix)
+-	  echo $prefix
++	  echo ${taglib_prefix} 
+ 	  ;;
+ 	*)
+ 	  echo "$0: unknown option $1"
