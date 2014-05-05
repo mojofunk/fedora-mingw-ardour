@@ -21,15 +21,17 @@ Patch1:         vamp-plugin-sdk-2.5-pkgconfig.patch
 
 BuildArch:     noarch
 
-BuildRequires:  mingw32-libsndfile
-BuildRequires:  mingw64-libsndfile
-
 BuildRequires: mingw32-filesystem >= 95
 BuildRequires: mingw64-filesystem >= 95
 BuildRequires: mingw32-gcc
 BuildRequires: mingw64-gcc
 BuildRequires: mingw32-binutils
 BuildRequires: mingw64-binutils
+
+BuildRequires: mingw32-libsndfile
+BuildRequires: mingw64-libsndfile
+BuildRequires: mingw32-fftw
+BuildRequires: mingw64-fftw
 
 BuildRequires: python
 BuildRequires: pkgconfig
@@ -136,6 +138,9 @@ popd
 %{mingw64_libdir}/pkgconfig/vamp*.pc
 
 %changelog
+* Mon May 5 2014 Tim Mayberry <mojofunk@gmail.com> - 2.5-4
+- Add dependency on fftw
+
 * Thu Apr 24 2014 Tim Mayberry <mojofunk@gmail.com> - 2.5-3
 - Patch vamp-hostsdk pkgconfig file to remove -ldl
 
