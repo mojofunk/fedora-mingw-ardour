@@ -1,23 +1,23 @@
 %{?mingw_package_header}
 
-%global _basename taglib
+%global native_pkg_name taglib
 
 %bcond_without tests
 %bcond_with doc
 %global apidocdir __api-doc_fedora
 
-Name:       mingw-%{_basename}	
+Name:       mingw-%{native_pkg_name
 Summary:    Audio Meta-Data Library
 Version:    1.9.1
-Release:    1%{?dist}
+Release:    2%{?dist}
 
 License:    LGPLv2 and MPL
 #URL:       http://launchpad.net/taglib
 URL:        http://taglib.github.com/
 %if 0%{?snap:1}
-Source0:    %{_basename}-%{version}-%{snap}.tar.gz
+Source0:    %{native_pkg_name}-%{version}-%{snap}.tar.gz
 %else
-Source0:    https://github.com/downloads/taglib/taglib/%{_basename}-%{version}%{?pre}.tar.gz
+Source0:    https://github.com/downloads/taglib/taglib/%{native_pkg_name}-%{version}%{?pre}.tar.gz
 %endif
 # The snapshot tarballs generated with the following script:
 Source1:    taglib-snapshot.sh
@@ -59,16 +59,16 @@ popular audio formats. Currently it supports both ID3v1 and ID3v2 for MP3
 files, Ogg Vorbis comments and ID3 tags and Vorbis comments in FLAC, MPC,
 Speex, WavPack, TrueAudio files, as well as APE Tags.
 
-%package -n mingw32-%{_basename}
+%package -n mingw32-%{native_pkg_name}
 Summary: MinGW Windows version of TagLib for the win32 target
-%description -n mingw32-%{_basename}
+%description -n mingw32-%{native_pkg_name}
 TagLib is a library for reading and editing the meta-data of several
 popular audio formats.
 This is the MinGW version, built for the win32 target.
 
-%package -n mingw64-%{_basename}
+%package -n mingw64-%{native_pkg_name}
 Summary: MinGW Windows version of TagLib for the win64 target
-%description -n mingw64-%{_basename}
+%description -n mingw64-%{native_pkg_name}
 TagLib is a library for reading and editing the meta-data of several
 popular audio formats.
 This is the MinGW version, built for the win64 target.
@@ -76,7 +76,7 @@ This is the MinGW version, built for the win64 target.
 %{?mingw_debug_package}
 
 %prep
-%setup -q -n %{_basename}-%{version}%{?pre}
+%setup -q -n %{native_pkg_name}-%{version}%{?pre}
 %patch0 -p1
 
 # patch1 not applied
@@ -107,7 +107,7 @@ find %{apidocdir} -name '*.md5' | xargs rm -fv
 %endif
 
 
-%files -n mingw32-%{_basename}
+%files -n mingw32-%{native_pkg_name}
 %doc AUTHORS COPYING.LGPL NEWS
 %{mingw32_bindir}/libtag.dll
 %{mingw32_bindir}/libtag_c.dll
@@ -122,8 +122,8 @@ find %{apidocdir} -name '*.md5' | xargs rm -fv
 %doc %{apidocdir}/*
 %endif
 
-%files -n mingw64-%{_basename}
-#%doc AUTHORS COPYING.LGPL NEWS
+%files -n mingw64-%{native_pkg_name}
+%doc AUTHORS COPYING.LGPL NEWS
 %{mingw64_bindir}/libtag.dll
 %{mingw64_bindir}/libtag_c.dll
 %doc examples
@@ -139,6 +139,9 @@ find %{apidocdir} -name '*.md5' | xargs rm -fv
 
 
 %changelog
+* Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> 1.9.1-2
+- Rebuild for Fedora 20
+
 * Wed Oct 23 2013 Tim Mayberry <mojofunk@gmail.com> 1.9.1-1
 - Update to version 1.9.1
 - License: +MPL

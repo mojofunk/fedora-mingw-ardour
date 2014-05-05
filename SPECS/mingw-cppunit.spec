@@ -1,9 +1,13 @@
-%global __strip %{mingw32_strip}
-%global __objdump %{mingw32_objdump}
+%{?mingw_package_header}
+
+%global native_pkg_name cppunit
+
+%global mingw_build_win32 1
+%global mingw_build_win64 1
 
 Name:           mingw-cppunit
 Version:        1.12.1
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        MinGW Windows C++ unit testing framework
 
 Group:          Development/Libraries
@@ -11,11 +15,18 @@ License:        LGPLv2+
 URL:            http://cppunit.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/cppunit/cppunit-%{version}.tar.gz
 Patch0:         mingw-cppunit-1.12.1-no-secure-lib.patch
+
 BuildArch:      noarch
 
-BuildRequires:  mingw32-filesystem >= 23
-BuildRequires:  mingw32-gcc-c++
-BuildRequires:  mingw32-binutils
+BuildRequires: mingw32-filesystem >= 95
+BuildRequires: mingw64-filesystem >= 95
+BuildRequires: mingw32-gcc
+BuildRequires: mingw32-gcc
+BuildRequires: mingw64-gcc-c++
+BuildRequires: mingw64-gcc-c++
+BuildRequires: mingw32-binutils
+BuildRequires: mingw64-binutils
+
 Requires: pkgconfig
 
 %description
@@ -36,6 +47,19 @@ tests.
 
 MinGW Windows C++ unit testing framework.
 
+%package -n mingw64-cppunit
+Summary:        MinGW Windows C++ unit testing framework
+
+%description -n mingw64-cppunit
+CppUnit is the C++ port of the famous JUnit framework for unit testing.
+Test output is in XML for automatic testing and GUI based for supervised
+tests.
+
+MinGW Windows C++ unit testing framework.
+
+
+%{?mingw_debug_package}
+
 
 %prep
 %setup -q -n cppunit-%{version}
@@ -48,15 +72,16 @@ for file in THANKS ChangeLog NEWS; do
 done
 
 %build
-%mingw32_configure --disable-static --disable-doxygen
+%mingw_configure --disable-static --disable-doxygen
 
-make %{?_smp_mflags}
+%mingw_make %{?_smp_mflags}
 
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
+%mingw_make_install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 # Remove the .la files
 rm -f $RPM_BUILD_ROOT%{mingw32_libdir}/*.la
+rm -f $RPM_BUILD_ROOT%{mingw64_libdir}/*.la
 
 
 %files -n mingw32-cppunit
@@ -70,9 +95,24 @@ rm -f $RPM_BUILD_ROOT%{mingw32_libdir}/*.la
 %{mingw32_datadir}/aclocal/cppunit.m4
 %exclude %{mingw32_mandir}/man1/cppunit-config.1
 
+%files -n mingw64-cppunit
+%doc AUTHORS COPYING NEWS README THANKS ChangeLog TODO BUGS doc/FAQ
+%{mingw64_bindir}/cppunit-config
+%{mingw64_bindir}/DllPlugInTester.exe
+%{mingw64_includedir}/cppunit/
+%{mingw64_bindir}/libcppunit-*.dll
+%{mingw64_libdir}/pkgconfig/cppunit.pc
+%{mingw64_libdir}/libcppunit.dll.a
+%{mingw64_datadir}/aclocal/cppunit.m4
+%exclude %{mingw64_mandir}/man1/cppunit-config.1
+
 
 %changelog
-* Fri Jul 31 2012 Tim Mayberry <mojofunk@gmail.com> - 1.12.1-10
+* Fri May 2 2014 Tim Mayberry <mojofunk@gmail.com> - 1.12.1-13
+- Add 64 bit package
+- increment version to supercede version in Fedora 20
+
+* Tue Jul 31 2012 Tim Mayberry <mojofunk@gmail.com> - 1.12.1-10
 - Add no-secure-lib patch to avoid sprintf_s usage
 
 * Fri Mar 09 2012 Kalev Lember <kalevlember@gmail.com> - 1.12.1-9
