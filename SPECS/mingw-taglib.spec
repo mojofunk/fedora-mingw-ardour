@@ -6,7 +6,7 @@
 %bcond_with doc
 %global apidocdir __api-doc_fedora
 
-Name:       mingw-%{native_pkg_name
+Name:       mingw-%{native_pkg_name}
 Summary:    Audio Meta-Data Library
 Version:    1.9.1
 Release:    2%{?dist}
