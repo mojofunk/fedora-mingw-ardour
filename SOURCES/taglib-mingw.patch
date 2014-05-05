@@ -1,0 +1,22 @@
+--- taglib-1.8-orig/bindings/c/CMakeLists.txt	2012-11-27 15:54:08.000000000 -0700
++++ taglib-1.8/bindings/c/CMakeLists.txt	2013-05-15 10:26:53.733323191 -0700
+@@ -61,7 +61,7 @@
+ 	PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/taglib
+ )
+ 
+-if(NOT WIN32 AND NOT BUILD_FRAMEWORK)
++if((MINGW OR NOT WIN32) AND NOT BUILD_FRAMEWORK)
+ 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/taglib_c.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/taglib_c.pc)
+ 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/taglib_c.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+ endif()
+--- taglib-1.8-orig/CMakeLists.txt	2012-11-27 15:54:08.000000000 -0700
++++ taglib-1.8/CMakeLists.txt	2013-05-15 10:26:47.661551500 -0700
+@@ -76,7 +76,7 @@
+   install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/taglib-config.cmd DESTINATION ${BIN_INSTALL_DIR})
+ endif()
+ 
+-if(NOT WIN32 AND NOT BUILD_FRAMEWORK)
++if((MINGW OR NOT WIN32) AND NOT BUILD_FRAMEWORK)
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/taglib.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/taglib.pc )
+   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/taglib.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+ endif()
