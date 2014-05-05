@@ -2,10 +2,7 @@
 
 %global native_pkg_name cppunit
 
-%global mingw_build_win32 1
-%global mingw_build_win64 1
-
-Name:           mingw-cppunit
+Name:           mingw-%{native_pkg_name}
 Version:        1.12.1
 Release:        11%{?dist}
 Summary:        MinGW Windows C++ unit testing framework
@@ -37,7 +34,7 @@ tests.
 MinGW Windows C++ unit testing framework.
 
 
-%package -n mingw32-cppunit
+%package -n mingw32-%{native_pkg_name}
 Summary:        MinGW Windows C++ unit testing framework
 
 %description -n mingw32-cppunit
@@ -47,10 +44,10 @@ tests.
 
 MinGW Windows C++ unit testing framework.
 
-%package -n mingw64-cppunit
+%package -n mingw64-%{native_pkg_name}
 Summary:        MinGW Windows C++ unit testing framework
 
-%description -n mingw64-cppunit
+%description -n mingw64-%{native_pkg_name}
 CppUnit is the C++ port of the famous JUnit framework for unit testing.
 Test output is in XML for automatic testing and GUI based for supervised
 tests.
@@ -62,7 +59,7 @@ MinGW Windows C++ unit testing framework.
 
 
 %prep
-%setup -q -n cppunit-%{version}
+%setup -q -n %{native_pkg_name}-%{version}
 %patch0 -p0 -b no-secure-lib
 
 for file in THANKS ChangeLog NEWS; do
@@ -79,6 +76,7 @@ done
 
 %install
 %mingw_make_install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
+
 # Remove the .la files
 rm -f $RPM_BUILD_ROOT%{mingw32_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{mingw64_libdir}/*.la
@@ -111,6 +109,7 @@ rm -f $RPM_BUILD_ROOT%{mingw64_libdir}/*.la
 * Fri May 2 2014 Tim Mayberry <mojofunk@gmail.com> - 1.12.1-13
 - Add 64 bit package
 - increment version to supercede version in Fedora 20
+- Minor spec file cleanup
 
 * Tue Jul 31 2012 Tim Mayberry <mojofunk@gmail.com> - 1.12.1-10
 - Add no-secure-lib patch to avoid sprintf_s usage
