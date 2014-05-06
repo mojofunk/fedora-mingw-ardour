@@ -1,0 +1,114 @@
+#!/usr/bin/env python
+
+#import waflib.Options as Options
+APPNAME = 'portaudio'
+VERSION = '2.0'
+
+def options(opt):
+	opt.load('compiler_c')
+	
+	opt.add_option('--platform', type='string', default='auto',
+		help='Specify the target for cross-compiling [auto,mingw]')
+	
+	# Unicode option?
+	# asio sdk path option
+	# mme option
+	# WASAPI option
+	# WDMKS option
+	# WDMKS for device info option
+	# Use directsound full duplex create
+
+def configure(conf):
+	conf.load('compiler_c')
+
+	conf.check(compiler='c',
+			lib='ole32',
+			mandatory=True,
+			uselib_store='OLE')
+
+	conf.check(compiler='c',
+			lib='winmm',
+			mandatory=True,
+			uselib_store='WINMM')
+	
+	
+def build(bld):
+
+	common_includes = '''
+	src/common/pa_allocation.h
+	src/common/pa_converters.h
+	src/common/pa_cpuload.h
+	src/common/pa_debugprint.h
+	src/common/pa_dither.h
+	src/common/pa_endianness.h
+	src/common/pa_hostapi.h
+	src/common/pa_memorybarrier.h
+	src/common/pa_process.h
+	src/common/pa_ringbuffer.h
+	src/common/pa_stream.h
+	src/common/pa_trace.h
+	src/common/pa_types.h
+	src/common/pa_util.h
+	'''
+
+	common_sources = '''
+	src/common/pa_allocation.c
+	src/common/pa_converters.c
+	src/common/pa_cpuload.c
+	src/common/pa_debugprint.c
+	src/common/pa_dither.c
+	src/common/pa_front.c
+	src/common/pa_process.c
+	src/common/pa_ringbuffer.c
+	src/common/pa_stream.c
+	src/common/pa_trace.c
+	'''
+
+	windows_sources = '''
+	src/os/win/pa_win_hostapis.c
+	src/os/win/pa_win_util.c
+	src/os/win/pa_win_waveformat.c
+	src/os/win/pa_win_coinitialize.c
+	'''
+
+	#src/os/win/pa_win_wdmks_utils.c
+	#src/os/win/pa_x86_plain_converters.c
+
+	dsound_includes = '''
+	include/pa_win_ds.h
+	src/hostapi/dsound/pa_win_ds_dynlink.h
+	'''
+
+	dsound_sources = '''
+	src/hostapi/dsound/pa_win_ds.c
+	src/hostapi/dsound/pa_win_ds_dynlink.c
+	'''
+
+	# build pkgconfig file
+	# set defines based on options
+	
+	obj = bld(features = 'c cshlib',
+	          includes = ['include', 'src/common', 'src/os/win'],
+		  source = common_sources + windows_sources,
+		  uselib = [ 'OLE', 'WINMM' ],
+		  target = 'portaudio',
+		  name = 'portaudio',
+		  vnum = '2.0.0'
+		  )
+
+	# install headers
+
+	bld.install_files ('${PREFIX}/include', 'include/portaudio.h')
+	bld.install_files ('${PREFIX}/include', 'include/pa_win_ds.h')
+
+	# build pkgconfig file
+
+	pc = bld (features = 'subst',
+			source = 'portaudio-2.0.pc.in',
+			target = 'portaudio-2.0.pc',
+			install_path = '${PREFIX}/lib/pkgconfig',
+			dict = {'PREFIX' : bld.env.PREFIX }
+		 )
+
+
+
