@@ -7,7 +7,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        0.4.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        An API for audio analysis and extracting annotations from audio signals
 
 Group:          System Environment/Libraries
@@ -20,6 +20,9 @@ BuildArch:     noarch
 BuildRequires:  mingw32-libsndfile
 BuildRequires:  mingw64-libsndfile
 
+BuildRequires:  mingw32-libsamplerate
+BuildRequires:  mingw64-libsamplerate
+
 # must be some others missing here?
 
 BuildRequires: mingw32-filesystem >= 95
@@ -29,6 +32,7 @@ BuildRequires: mingw64-gcc
 BuildRequires: mingw32-binutils
 BuildRequires: mingw64-binutils
 
+BuildRequires: wine-core
 BuildRequires: python
 BuildRequires: pkgconfig
 
@@ -82,9 +86,9 @@ pushd win32
 	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
 	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
 
-	./waf configure --with-target-platform=win32
+	./waf configure --disable-jack --with-target-platform=win32
 
-	./waf build -j4 -v
+	./waf build %{?_smp_mflags} -v
 popd
 
 pushd win64
@@ -94,9 +98,9 @@ pushd win64
 	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
 	export PKG_CONFIG_LIBDIR=%{mingw64_libdir}/pkgconfig
 
-	./waf configure --with-target-platform=win64
+	./waf configure --disable-jack --with-target-platform=win64
 
-	./waf build -j4 -v
+	./waf build %{?_smp_mflags} -v
 popd
 
 %install
@@ -144,5 +148,11 @@ rm -rf ${RPM_BUILD_ROOT}/%{mingw64_docdir}
 %{mingw64_libdir}/pkgconfig/aubio.pc
 
 %changelog
+* Thu May 8 2014 Tim Mayberry <mojofunk@gmail.com> - 0.4.1-2
+- Disable support for jack as causes build failure
+- Add missing mingw-libsamplerate dependences
+- Add wine-core dependency needed to run unit tests
+- use _smp_mflags
+
 * Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> - 0.4.1-1
 - Initial mingw package of Aubio 0.4.1
