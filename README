@@ -1,5 +1,5 @@
 This is a rough list of library dependencies for building Ardour
-for windows using the MinGW compiler on Fedora
+for windows using the MinGW compiler on Fedora 19 and 20.
  
 The packages contained in this repository are all the packages that
 have not yet been included in Fedora.
@@ -30,12 +30,12 @@ install mingw*-gcc-c++
 
 install mingw*-libogg
 
-yum group install 'Developement Tools'
-yum group install 'RPM Developement Tools'
+yum group install 'Development Tools'
+yum group install 'RPM Development Tools'
 
 install mingw*pkg-config
 
-build/install mingw-flac <- requires libogg
+install mingw-flac <- requires libogg
 
 install mingw*-libvorbis
 
@@ -48,11 +48,13 @@ install intltool
 
 build/install mingw-gtk2-engines <- provides clearlooks
 
-install mingw*-libglade2, required for gnomecanvas
+# no longer necessary with cairocanvas branch
 
-build/install mingw-libart_lgpl
-build/install mingw-libgnomecanvas <- requires libart, libglade2
-build/install mingw-libgnomecanvasmm
+#install mingw*-libglade2, required for gnomecanvas
+
+#build/install mingw-libart_lgpl
+#build/install mingw-libgnomecanvas <- requires libart, libglade2
+#build/install mingw-libgnomecanvasmm
 
 build/install mingw-portaudio
 
@@ -61,9 +63,10 @@ install mingw*libgnurx
 
 build/install mingw-jack-audio-connection-kit
 
-install gcc-gfortran
+# not necessary now that fftw package is included in fedora
+#install gcc-gfortran
 
-build/install mingw-fftw
+install mingw-fftw
 
 build/install mingw-liblo
 
@@ -71,9 +74,17 @@ install mingw*-boost
 
 install mingw*-curl
 
+install cmake
+
+build/install mingw-taglib
+
+build/install mingw-vamp-plugin-sdk
+
+build/install mingw-rubberband
+
+build/install mingw-aubio
+
 Optional
 
 build/install mingw*-cppunit, if tests enabled
 install mingw*-gdb, for debugging
-
-install qemu-kvm to run virt images
