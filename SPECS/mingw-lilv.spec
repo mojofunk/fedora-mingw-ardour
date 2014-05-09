@@ -83,6 +83,7 @@ rm -rf lilv-%{version}
 pushd win32
 	export PREFIX=%{mingw32_prefix}
 	%{mingw32_env}
+	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
 	./waf configure
 	./waf build -v %{?_smp_mflags}
 popd
@@ -90,6 +91,7 @@ popd
 pushd win64
 	export PREFIX=%{mingw64_prefix}
 	%{mingw64_env}
+	export PKG_CONFIG_LIBDIR=%{mingw64_libdir}/pkgconfig
 	./waf configure
 	./waf build -v %{?_smp_mflags}
 popd
