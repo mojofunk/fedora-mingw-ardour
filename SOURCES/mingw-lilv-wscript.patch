@@ -1,0 +1,22 @@
+--- lilv-0.18.0/wscript.orig	2014-01-05 07:18:19.000000000 +1000
++++ lilv-0.18.0/wscript	2014-05-04 13:44:33.229263610 +1000
+@@ -120,6 +120,9 @@
+     if Options.options.dyn_manifest:
+         autowaf.define(conf, 'LILV_DYN_MANIFEST', 1)
+ 
++    Options.platform = 'win32'
++    sys.platform = 'win32'
++
+     lilv_path_sep = ':'
+     lilv_dir_sep  = '/'
+     if sys.platform == 'win32':
+@@ -213,6 +216,9 @@
+         src/zix/tree.c
+     '''.split()
+ 
++    Options.platform = 'win32'
++    sys.platform = 'win32'
++
+     lib      = ['dl']
+     libflags = ['-fvisibility=hidden']
+     defines  = []

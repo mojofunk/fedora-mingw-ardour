@@ -1,0 +1,9 @@
+--- lilv-0.18.0/lilv.pc.in.orig	2014-05-04 14:25:11.181850046 +1000
++++ lilv-0.18.0/lilv.pc.in	2014-05-04 14:25:27.364862119 +1000
+@@ -7,5 +7,5 @@
+ Version: @LILV_VERSION@
+ Description: Simple C library for hosting LV2 plugins
+ Requires: lv2 @PKG_serd_0@ @PKG_sord_0@ @PKG_sratom_0@
+-Libs: -L${libdir} -l@LIB_LILV@ -ldl
++Libs: -L${libdir} -l@LIB_LILV@
+ Cflags: -I${includedir}/lilv-@LILV_MAJOR_VERSION@
