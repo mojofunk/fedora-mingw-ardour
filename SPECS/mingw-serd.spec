@@ -1,15 +1,12 @@
 %{?mingw_package_header}
 
-#%global mingw_build_win32 1
-#%global mingw_build_win64 1
-
-%global mingw_pkg_name serd
+%global native_pkg_name serd
 
 %global maj 0
 
-Name:           mingw-serd
+Name:           mingw-%{native_pkg_name}
 Version:        0.18.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A lightweight C library for RDF syntax
 
 Group:          System Environment/Libraries
@@ -45,21 +42,21 @@ simple reader/writer with minimal dependencies is ideal (e.g. in LV2
 implementations or embedded applications).is a library to make the use of 
 LV2 plugins as simple as possible for applications. 
 
-%package -n mingw32-%{mingw_pkg_name}
+%package -n mingw32-%{native_pkg_name}
 Summary:        Development libraries and headers for %{name}
 Group:          Development/Libraries
 
-%description -n mingw32-%{mingw_pkg_name}
+%description -n mingw32-%{native_pkg_name}
 %{name} is a lightweight C library for RDF syntax which supports reading and 
 writing Turtle and NTriples.
 
 This package contains the headers and development libraries for %{name}.
 
-%package -n mingw64-%{mingw_pkg_name}
+%package -n mingw64-%{native_pkg_name}
 Summary:        Development libraries and headers for %{name}
 Group:          Development/Libraries
 
-%description -n mingw64-%{mingw_pkg_name}
+%description -n mingw64-%{native_pkg_name}
 %{name} is a lightweight C library for RDF syntax which supports reading and 
 writing Turtle and NTriples.
 
@@ -81,13 +78,14 @@ rm -rf serd-%{version}
 
 pushd win32
 	export PREFIX=%{mingw32_prefix}
-	#%{mingw32_env}
+	%{mingw32_env}
 	./waf configure
 	./waf build -v %{?_smp_mflags}
 popd
 
 pushd win64
 	export PREFIX=%{mingw64_prefix}
+	%{mingw64_env}
 	./waf configure
 	./waf build -v %{?_smp_mflags}
 popd
@@ -113,7 +111,7 @@ rm -rf %{buildroot}%{mingw32_mandir}
 rm -rf %{buildroot}%{mingw64_mandir}
 
 
-%files -n mingw32-%{mingw_pkg_name}
+%files -n mingw32-%{native_pkg_name}
 %doc AUTHORS NEWS README COPYING
 %{mingw32_bindir}/serd-%{maj}-0.dll
 %{mingw32_bindir}/serdi.exe
@@ -121,7 +119,7 @@ rm -rf %{buildroot}%{mingw64_mandir}
 %{mingw32_libdir}/pkgconfig/serd*.pc
 %{mingw32_includedir}/serd-%{maj}/
 
-%files -n mingw64-%{mingw_pkg_name}
+%files -n mingw64-%{native_pkg_name}
 %doc AUTHORS NEWS README COPYING
 %{mingw64_bindir}/serd-%{maj}-0.dll
 %{mingw64_bindir}/serdi.exe
@@ -130,5 +128,8 @@ rm -rf %{buildroot}%{mingw64_mandir}
 %{mingw64_includedir}/serd-%{maj}/
 
 %changelog
+* Sun May 4 2014 Tim Mayberry <mojofunk@gmail.com> - 0.18.2-2
+- Tweaks to spec file
+
 * Tue Oct 22 2013 Tim Mayberry <mojofunk@gmail.com> - 0.18.2-1
 - Initial mingw-w64 package
