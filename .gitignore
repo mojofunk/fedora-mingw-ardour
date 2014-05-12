@@ -1,2 +1,6 @@
+BUILD
+BUILDROOT
+SRPMS
+RPMS
 *.tar.*
 *.tgz
