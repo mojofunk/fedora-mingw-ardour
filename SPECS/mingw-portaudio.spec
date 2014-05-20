@@ -7,7 +7,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        2.0
-Release:        2%{?dist}
+Release:        4%{?dist}
 Summary:        Free, cross platform, open-source, audio I/O library
 Group:          System Environment/Libraries
 License:        MIT
@@ -79,9 +79,9 @@ pushd win32
 	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
 	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
 
-	./waf configure
+	./waf configure --with-directx --with-tests --with-examples
 
-	./waf build -j1 -v
+	./waf build %{?_smp_mflags} -v
 popd
 
 pushd win64
@@ -91,9 +91,9 @@ pushd win64
 	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
 	export PKG_CONFIG_LIBDIR=%{mingw64_libdir}/pkgconfig
 
-	./waf configure
+	./waf configure --with-directx --with-tests --with-examples
 
-	./waf build -j1 -v
+	./waf build %{?_smp_mflags} -v
 popd
 
 %install
@@ -115,6 +115,9 @@ popd
 %{mingw32_includedir}/portaudio.h
 %{mingw32_includedir}/pa_win_ds.h
 %{mingw32_bindir}/portaudio-2.dll
+%{mingw32_bindir}/pa_devs.exe
+%{mingw32_bindir}/patest1.exe
+%{mingw32_bindir}/patest_longsine.exe
 %{mingw32_libdir}/libportaudio*dll.a
 %{mingw32_libdir}/pkgconfig/portaudio-2.0.pc
 
@@ -123,10 +126,19 @@ popd
 %{mingw64_includedir}/portaudio.h
 %{mingw64_includedir}/pa_win_ds.h
 %{mingw64_bindir}/portaudio-2.dll
+%{mingw64_bindir}/pa_devs.exe
+%{mingw64_bindir}/patest1.exe
+%{mingw64_bindir}/patest_longsine.exe
 %{mingw64_libdir}/libportaudio*dll.a
 %{mingw64_libdir}/pkgconfig/portaudio-2.0.pc
 
 %changelog
+* Thu May 15 2014 Tim Mayberry <mojofunk@gmail.com> - 2.0-4
+- Add directx backend to build
+
+* Thu May 15 2014 Tim Mayberry <mojofunk@gmail.com> - 2.0-3
+- Add tests and examples to build
+
 * Thu Apr 24 2014 Tim Mayberry <mojofunk@gmail.com> - 2.0-2
 - Fix portaudio header install path
 
