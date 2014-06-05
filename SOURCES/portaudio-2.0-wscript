@@ -21,13 +21,17 @@ def options(opt):
 
 	opt.add_option('--with-directx', action='store_true', default=False, dest='with_directx',
 		help='Build DirectX support')
+
+	opt.add_option('--with-wdmks', action='store_true', default=False, dest='with_wdmks',
+		help='Build with WDM/KS API support')
+
+	opt.add_option('--with-wdmks-device-info', action='store_true', default=False, dest='with_wdmks_device_info',
+		help='Use WDM/KS API for defice info')
 	
 	# Unicode option?
 	# asio sdk path option
 	# mme option
 	# WASAPI option
-	# WDMKS option
-	# WDMKS for device info option
 	# Use directsound full duplex create
 
 def configure(conf):
@@ -52,9 +56,28 @@ def configure(conf):
 	if Options.options.with_directx:
 		conf.env['WITH_DIRECTX'] = True
 
+	if Options.options.with_wdmks:
+		conf.env['WITH_WDMKS'] = True
+
+		conf.check(compiler='c',
+				lib='setupapi',
+				mandatory=True,
+				uselib_store='SETUPAPI')
+
+		conf.check(compiler='c',
+				lib='ksuser',
+				mandatory=True,
+				uselib_store='KSUSER')
+
+		conf.check(compiler='c',
+				lib='uuid',
+				mandatory=True,
+				uselib_store='UUID')
+
 def build(bld):
 
 	use_defines = [ ]
+	uselib_extra = [ ]
 
 	common_includes = '''
 	src/common/pa_allocation.h
@@ -90,6 +113,7 @@ def build(bld):
 	src/os/win/pa_win_hostapis.c
 	src/os/win/pa_win_util.c
 	src/os/win/pa_win_waveformat.c
+	src/os/win/pa_win_wdmks_utils.c
 	src/os/win/pa_win_coinitialize.c
 	'''
 
@@ -106,6 +130,14 @@ def build(bld):
 	src/hostapi/dsound/pa_win_ds_dynlink.c
 	'''
 
+	wdmks_includes = '''
+	include/pa_win_wdmks.h
+	'''
+
+	wdmks_sources = '''
+	src/hostapi/wdmks/pa_win_wdmks.c
+	'''
+
 	# build pkgconfig file
 	# set defines based on options
 	
@@ -113,10 +145,18 @@ def build(bld):
 		windows_sources += dsound_sources
 		use_defines += ['PA_USE_DS=1']
 
+	if bld.env['WITH_WDMKS']:
+		windows_sources += wdmks_sources
+		use_defines += ['PA_USE_WDMKS=1']
+	#	use_defines += ['PA_WDMKS_NO_KSGGUID_LIB=1']
+		uselib_extra += ['SETUPAPI']
+		uselib_extra += ['KSUSER']
+		uselib_extra += ['UUID']
+
 	obj = bld(features = 'c cshlib',
 	          includes = ['include', 'src/common', 'src/os/win'],
 		  source = common_sources + windows_sources,
-		  uselib = [ 'OLE', 'WINMM' ],
+		  uselib = [ 'OLE', 'WINMM' ] + uselib_extra,
 		  defines = use_defines,
 		  target = 'portaudio',
 		  name = 'portaudio',
@@ -160,7 +200,12 @@ def build(bld):
 	# install headers
 
 	bld.install_files ('${PREFIX}/include', 'include/portaudio.h')
-	bld.install_files ('${PREFIX}/include', 'include/pa_win_ds.h')
+
+	if bld.env['WITH_DIRECTX']:
+		bld.install_files ('${PREFIX}/include', 'include/pa_win_ds.h')
+
+	if bld.env['WITH_WDMKS']:
+		bld.install_files ('${PREFIX}/include', 'include/pa_win_wdmks.h')
 
 	# build pkgconfig file
 
