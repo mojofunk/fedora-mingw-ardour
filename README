@@ -46,6 +46,8 @@ install mingw*-gtkmm24, this will pull in all the gtk+ deps etc
 
 install intltool
 
+install mingw*-libxml2
+
 build/install mingw-gtk2-engines <- provides clearlooks
 
 # no longer necessary with cairocanvas branch
@@ -83,6 +85,16 @@ build/install mingw-vamp-plugin-sdk
 build/install mingw-rubberband
 
 build/install mingw-aubio
+
+build/install mingw-serd
+
+build/install mingw-sord
+
+build/install mingw-lv2
+
+build/install mingw-sratom
+
+build/install mingw-lilv
 
 Optional
 
