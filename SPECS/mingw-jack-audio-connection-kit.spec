@@ -8,16 +8,12 @@
 Summary:       The Jack Audio Connection Kit
 Name:          mingw-jack-audio-connection-kit
 Version:       1.9.10
-Release:       2%{?dist}
+Release:       3%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
 URL:           http://www.jackaudio.org
 Source0:       http://www.grame.fr/~letz/jack-%{version}.tar.bz2
-Patch1:        jack-1.9.10-client-shutdown-api-fix.patch
-Patch0:        jack-1.9.10-mingw-waf.patch
-Patch2:        jack-1.9.10-portaudio-no-asio.patch
-Patch3:        jack-1.9.10-example-clients.patch
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -139,11 +135,6 @@ Small example clients that use the Jack Audio Connection Kit.
 
 pushd jack-%{version}
 
-%patch0 -p1 -b .csdapi
-%patch1 -p1 -b .mingw
-%patch2 -p1 -b .noasio
-%patch3 -p1 -b .examples
-
 # Fix encoding issues
 for file in ChangeLog README TODO; do
 	sed 's|\r||' $file > $file.tmp
@@ -249,6 +240,9 @@ popd
 
 
 %changelog
+* Fri Jun 6 2014 Tim Mayberry <mojofunk@gmail.com> - 1.9.10-3
+- Update to upstream HEAD and drop all patches
+
 * Thu Apr 24 2014 Tim Mayberry <mojofunk@gmail.com> - 1.9.10-2
 - Enable 64bit build
 
