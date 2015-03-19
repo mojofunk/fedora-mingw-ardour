@@ -13,11 +13,17 @@ def options(opt):
 	opt.add_option('--platform', type='string', default='auto',
 		help='Specify the target for cross-compiling [auto,mingw]')
 
+	opt.add_option('--enable-static', action='store_true', default=False, dest='enable_static',
+		help='Build a static version of Portaudio library')
+
 	opt.add_option('--with-tests', action='store_true', default=False, dest='with_tests',
 		help='Build Portaudio tests')
 
 	opt.add_option('--with-examples', action='store_true', default=False, dest='with_examples',
 		help='Build Portaudio example programs')
+
+	opt.add_option('--with-wmme', action='store_true', default=False, dest='with_wmme',
+		help='Build WMME support')
 
 	opt.add_option('--with-directx', action='store_true', default=False, dest='with_directx',
 		help='Build DirectX support')
@@ -47,11 +53,17 @@ def configure(conf):
 			mandatory=True,
 			uselib_store='WINMM')
 
+	if Options.options.enable_static:
+		conf.env['ENABLE_STATIC'] = True
+
 	if Options.options.with_tests:
 		conf.env['WITH_TESTS'] = True
 
 	if Options.options.with_examples:
 		conf.env['WITH_EXAMPLES'] = True
+
+	if Options.options.with_directx:
+		conf.env['WITH_WMME'] = True
 
 	if Options.options.with_directx:
 		conf.env['WITH_DIRECTX'] = True
@@ -113,12 +125,17 @@ def build(bld):
 	src/os/win/pa_win_hostapis.c
 	src/os/win/pa_win_util.c
 	src/os/win/pa_win_waveformat.c
-	src/os/win/pa_win_wdmks_utils.c
 	src/os/win/pa_win_coinitialize.c
+	src/os/win/pa_x86_plain_converters.c
 	'''
 
-	#src/os/win/pa_win_wdmks_utils.c
-	#src/os/win/pa_x86_plain_converters.c
+	wmme_includes = '''
+	include/pa_win_wmme.h
+	'''
+
+	wmme_sources = '''
+	src/hostapi/wmme/pa_win_wmme.c
+	'''
 
 	dsound_includes = '''
 	include/pa_win_ds.h
@@ -136,10 +153,12 @@ def build(bld):
 
 	wdmks_sources = '''
 	src/hostapi/wdmks/pa_win_wdmks.c
+	src/os/win/pa_win_wdmks_utils.c
 	'''
 
-	# build pkgconfig file
-	# set defines based on options
+	if bld.env['WITH_WMME']:
+		windows_sources += wmme_sources
+		use_defines += ['PA_USE_WMME=1']
 	
 	if bld.env['WITH_DIRECTX']:
 		windows_sources += dsound_sources
@@ -148,7 +167,6 @@ def build(bld):
 	if bld.env['WITH_WDMKS']:
 		windows_sources += wdmks_sources
 		use_defines += ['PA_USE_WDMKS=1']
-	#	use_defines += ['PA_WDMKS_NO_KSGGUID_LIB=1']
 		uselib_extra += ['SETUPAPI']
 		uselib_extra += ['KSUSER']
 		uselib_extra += ['UUID']
@@ -163,13 +181,74 @@ def build(bld):
 		  vnum = '2.0.0'
 		  )
 
+	if bld.env['ENABLE_STATIC']:
+		obj = bld(features = 'c cstlib',
+				includes = ['include', 'src/common', 'src/os/win'],
+				source = common_sources + windows_sources,
+				uselib = [ 'OLE', 'WINMM' ] + uselib_extra,
+				defines = use_defines,
+				target = 'portaudio',
+				name = 'portaudio-static',
+				vnum = '2.0.0'
+				)
 
 	if bld.env['WITH_TESTS']:
 		test_sources = '''
+			test/pa_minlat.c
 			test/patest1.c
+			test/patest_buffer.c
+			test/patest_callbackstop.c
+			test/patest_clip.c
+			test/patest_converters.c
+			test/patest_dither.c
+			test/patest_hang.c
+			test/patest_in_overflow.c
+			test/patest_latency.c
+			test/patest_leftright.c
 			test/patest_longsine.c
+			test/patest_many.c
+			test/patest_maxsines.c
+			test/patest_mono.c
+			test/patest_multi_sine.c
+			test/patest_out_underflow.c
+			test/patest_prime.c
+			test/patest_read_record.c
+			test/patest_ringmix.c
+			test/patest_sine8.c
+			test/patest_sine_channelmaps.c
+			test/patest_sine_formats.c
+			test/patest_sine_srate.c
+			test/patest_sine_time.c
+			test/patest_start_stop.c
+			test/patest_stop.c
+			test/patest_stop_playout.c
+			test/patest_suggested_vs_streaminfo_latency.c
+			test/patest_sync.c
+			test/patest_timing.c
+			test/patest_toomanysines.c
+			test/patest_two_rates.c
+			test/patest_underflow.c
+			test/patest_wire.c
+			test/patest_write_stop.c
+			'''.split()
+
+		wmme_test_sources = '''
+			test/patest_wmme_find_best_latency_params.c
+			test/patest_wmme_low_level_latency_params.c
+			'''.split()
+
+		if bld.env['WITH_WMME']:
+			test_sources+=wmme_test_sources
+
+		dsound_test_sources = '''
+			test/patest_dsound_find_best_latency_params.c
+			test/patest_dsound_low_level_latency_params.c
+			test/patest_dsound_surround.c
 			'''.split()
 		
+		if bld.env['WITH_DIRECTX']:
+			test_sources+=dsound_test_sources
+
 		for test_src in test_sources:
 
 			bld(features = 'c cprogram',
@@ -200,6 +279,9 @@ def build(bld):
 	# install headers
 
 	bld.install_files ('${PREFIX}/include', 'include/portaudio.h')
+
+	if bld.env['WITH_WMME']:
+		bld.install_files ('${PREFIX}/include', 'include/pa_win_wmme.h')
 
 	if bld.env['WITH_DIRECTX']:
 		bld.install_files ('${PREFIX}/include', 'include/pa_win_ds.h')
