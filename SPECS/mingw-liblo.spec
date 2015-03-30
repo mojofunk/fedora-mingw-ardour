@@ -4,7 +4,7 @@
 
 Name:         mingw-%{native_pkg_name}
 Version:      0.27
-Release:      2%{?dist}
+Release:      3%{?dist}
 Summary:      Open Sound Control library
 License:      LGPLv2+
 Group:        System Environment/Libraries
@@ -27,7 +27,6 @@ liblo is an implementation of the Open Sound Control protocol for
 POSIX systems developed by Steve Harris.
 
 %package -n mingw32-%{native_pkg_name}
-Summary:        %{summary}
 Summary:        Libraries, includes, etc to develop liblo applications
 Group:          Development/Libraries
 
@@ -44,7 +43,6 @@ Group:          Development/Libraries
 Static cross compiled version of the Liblo library.
 
 %package -n mingw64-%{native_pkg_name}
-Summary:        %{summary}
 Summary:        Libraries, includes, etc to develop liblo applications
 Group:          Development/Libraries
 
@@ -107,6 +105,9 @@ find $RPM_BUILD_ROOT%{mingw64_libdir} -name '*.la' -delete
 %{mingw64_libdir}/liblo.a
 
 %changelog
+* Tue Mar 10 2015 Tim Mayberry <mojofunk@gmail.com> - 0.27-3
+- Rebuild for Fedora 21
+
 * Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> - 0.27-2
 - Rebuild for Fedora 20
 - Minor spec file updates
