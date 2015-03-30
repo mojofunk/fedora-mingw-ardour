@@ -50,23 +50,14 @@ install mingw*-libxml2
 
 build/install mingw-gtk2-engines <- provides clearlooks
 
-# no longer necessary with cairocanvas branch
-
-#install mingw*-libglade2, required for gnomecanvas
-
-#build/install mingw-libart_lgpl
-#build/install mingw-libgnomecanvas <- requires libart, libglade2
-#build/install mingw-libgnomecanvasmm
-
 build/install mingw-portaudio
 
-install mingw*pthreads
+# no longer necessary with Fedora>19
+#install mingw*pthreads
+
 install mingw*libgnurx
 
 build/install mingw-jack-audio-connection-kit
-
-# not necessary now that fftw package is included in fedora
-#install gcc-gfortran
 
 install mingw-fftw
 
@@ -78,7 +69,7 @@ install mingw*-curl
 
 install cmake
 
-build/install mingw-taglib
+install mingw-taglib
 
 build/install mingw-vamp-plugin-sdk
 
