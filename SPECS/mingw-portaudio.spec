@@ -7,7 +7,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        2.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Free, cross platform, open-source, audio I/O library
 Group:          System Environment/Libraries
 License:        MIT
@@ -94,7 +94,7 @@ pushd win32
 	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
 	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
 
-	./waf configure --with-wmme --with-directx --with-wdmks \
+	./waf configure --with-wmme --with-directx --with-wasapi \
 	                --with-tests --with-examples
 
 	./waf build %{?_smp_mflags} -v
@@ -107,7 +107,7 @@ pushd win64
 	#export PKG_CONFIG_PREFIX=$MINGW_ROOT
 	export PKG_CONFIG_LIBDIR=%{mingw64_libdir}/pkgconfig
 
-	./waf configure --with-wmme --with-directx --with-wdmks \
+	./waf configure --with-wmme --with-directx --with-wasapi \
 	                --with-tests --with-examples
 
 	./waf build %{?_smp_mflags} -v
@@ -132,7 +132,7 @@ popd
 %{mingw32_includedir}/portaudio.h
 %{mingw32_includedir}/pa_win_wmme.h
 %{mingw32_includedir}/pa_win_ds.h
-%{mingw32_includedir}/pa_win_wdmks.h
+%{mingw32_includedir}/pa_win_wasapi.h
 %{mingw32_bindir}/portaudio-2.dll
 %{mingw32_bindir}/pa_devs.exe
 %{mingw32_libdir}/libportaudio*dll.a
@@ -186,7 +186,7 @@ popd
 %{mingw64_includedir}/portaudio.h
 %{mingw64_includedir}/pa_win_wmme.h
 %{mingw64_includedir}/pa_win_ds.h
-%{mingw64_includedir}/pa_win_wdmks.h
+%{mingw64_includedir}/pa_win_wasapi.h
 %{mingw64_bindir}/portaudio-2.dll
 %{mingw64_bindir}/pa_devs.exe
 %{mingw64_libdir}/libportaudio*dll.a
@@ -236,6 +236,9 @@ popd
 %{mingw64_bindir}/patest_write_stop.exe
 
 %changelog
+* Tue Apr 28 2015 Tim Mayberry <mojofunk@gmail.com> - 2.0-7
+- Add --with-wasapi option and use it instead of wdmks
+
 * Thu Mar 19 2015 Tim Mayberry <mojofunk@gmail.com> - 2.0-6
 - Add --with-wmme option
 - Added x86 plain converters to build

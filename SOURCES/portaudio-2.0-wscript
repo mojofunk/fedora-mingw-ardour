@@ -7,91 +7,92 @@ from waflib import Options
 APPNAME = 'portaudio'
 VERSION = '2.0'
 
+
 def options(opt):
-	opt.load('compiler_c')
-	
-	opt.add_option('--platform', type='string', default='auto',
-		help='Specify the target for cross-compiling [auto,mingw]')
+    opt.load('compiler_c')
 
-	opt.add_option('--enable-static', action='store_true', default=False, dest='enable_static',
-		help='Build a static version of Portaudio library')
+    opt.add_option('--platform', type='string', default='auto',
+                   help='Specify the target for cross-compiling [auto,mingw]')
 
-	opt.add_option('--with-tests', action='store_true', default=False, dest='with_tests',
-		help='Build Portaudio tests')
+    opt.add_option('--enable-static', action='store_true', default=False, dest='enable_static',
+                   help='Build a static version of Portaudio library')
 
-	opt.add_option('--with-examples', action='store_true', default=False, dest='with_examples',
-		help='Build Portaudio example programs')
+    opt.add_option('--with-tests', action='store_true', default=False, dest='with_tests',
+                   help='Build Portaudio tests')
 
-	opt.add_option('--with-wmme', action='store_true', default=False, dest='with_wmme',
-		help='Build WMME support')
+    opt.add_option('--with-examples', action='store_true', default=False, dest='with_examples',
+                   help='Build Portaudio example programs')
 
-	opt.add_option('--with-directx', action='store_true', default=False, dest='with_directx',
-		help='Build DirectX support')
+    opt.add_option('--with-wmme', action='store_true', default=False, dest='with_wmme',
+                   help='Build WMME support')
 
-	opt.add_option('--with-wdmks', action='store_true', default=False, dest='with_wdmks',
-		help='Build with WDM/KS API support')
+    opt.add_option('--with-directx', action='store_true', default=False, dest='with_directx',
+                   help='Build DirectX support')
 
-	opt.add_option('--with-wdmks-device-info', action='store_true', default=False, dest='with_wdmks_device_info',
-		help='Use WDM/KS API for defice info')
-	
-	# Unicode option?
-	# asio sdk path option
-	# mme option
-	# WASAPI option
-	# Use directsound full duplex create
+    opt.add_option('--with-wdmks', action='store_true', default=False, dest='with_wdmks',
+                   help='Build with WDM/KS API support')
+
+    opt.add_option('--with-wdmks-device-info', action='store_true', default=False, dest='with_wdmks_device_info',
+                   help='Use WDM/KS API for defice info')
+
+    opt.add_option('--with-wasapi', action='store_true', default=False, dest='with_wasapi',
+                   help='Build with WASAPI API support')
+
+    # Unicode option?
+    # asio sdk path option
+    # Use directsound full duplex create
+
 
 def configure(conf):
-	conf.load('compiler_c')
+    conf.load('compiler_c')
 
-	conf.check(compiler='c',
-			lib='ole32',
-			mandatory=True,
-			uselib_store='OLE')
+    conf.check(compiler='c',
+               lib='ole32',
+               mandatory=True,
+               uselib_store='OLE')
 
-	conf.check(compiler='c',
-			lib='winmm',
-			mandatory=True,
-			uselib_store='WINMM')
+    conf.check(compiler='c',
+               lib='winmm',
+               mandatory=True,
+               uselib_store='WINMM')
 
-	if Options.options.enable_static:
-		conf.env['ENABLE_STATIC'] = True
+    conf.env.ENABLE_STATIC = Options.options.enable_static
 
-	if Options.options.with_tests:
-		conf.env['WITH_TESTS'] = True
+    conf.env.WITH_TESTS = Options.options.with_tests
 
-	if Options.options.with_examples:
-		conf.env['WITH_EXAMPLES'] = True
+    conf.env.WITH_EXAMPLES = Options.options.with_examples
 
-	if Options.options.with_directx:
-		conf.env['WITH_WMME'] = True
+    conf.env.WITH_WMME = Options.options.with_wmme
 
-	if Options.options.with_directx:
-		conf.env['WITH_DIRECTX'] = True
+    conf.env.WITH_DIRECTX = Options.options.with_directx
 
-	if Options.options.with_wdmks:
-		conf.env['WITH_WDMKS'] = True
+    conf.env.WITH_WDMKS = Options.options.with_wdmks
 
-		conf.check(compiler='c',
-				lib='setupapi',
-				mandatory=True,
-				uselib_store='SETUPAPI')
+    conf.env.WITH_WASAPI = Options.options.with_wasapi
 
-		conf.check(compiler='c',
-				lib='ksuser',
-				mandatory=True,
-				uselib_store='KSUSER')
+    if conf.env.WITH_WDMKS:
+        conf.check(compiler='c',
+                   lib='setupapi',
+                   mandatory=True,
+                   uselib_store='SETUPAPI')
 
-		conf.check(compiler='c',
-				lib='uuid',
-				mandatory=True,
-				uselib_store='UUID')
+        conf.check(compiler='c',
+                   lib='ksuser',
+                   mandatory=True,
+                   uselib_store='KSUSER')
+
+    if conf.env.WITH_WDMKS or conf.env.WITH_WASAPI:
+        conf.check(compiler='c',
+                   lib='uuid',
+                   mandatory=True,
+                   uselib_store='UUID')
 
 def build(bld):
 
-	use_defines = [ ]
-	uselib_extra = [ ]
+    use_defines = []
+    uselib_extra = []
 
-	common_includes = '''
+    common_includes = '''
 	src/common/pa_allocation.h
 	src/common/pa_converters.h
 	src/common/pa_cpuload.h
@@ -108,7 +109,7 @@ def build(bld):
 	src/common/pa_util.h
 	'''
 
-	common_sources = '''
+    common_sources = '''
 	src/common/pa_allocation.c
 	src/common/pa_converters.c
 	src/common/pa_cpuload.c
@@ -121,7 +122,7 @@ def build(bld):
 	src/common/pa_trace.c
 	'''
 
-	windows_sources = '''
+    windows_sources = '''
 	src/os/win/pa_win_hostapis.c
 	src/os/win/pa_win_util.c
 	src/os/win/pa_win_waveformat.c
@@ -129,71 +130,80 @@ def build(bld):
 	src/os/win/pa_x86_plain_converters.c
 	'''
 
-	wmme_includes = '''
+    wmme_includes = '''
 	include/pa_win_wmme.h
 	'''
 
-	wmme_sources = '''
+    wmme_sources = '''
 	src/hostapi/wmme/pa_win_wmme.c
 	'''
 
-	dsound_includes = '''
+    dsound_includes = '''
 	include/pa_win_ds.h
 	src/hostapi/dsound/pa_win_ds_dynlink.h
 	'''
 
-	dsound_sources = '''
+    dsound_sources = '''
 	src/hostapi/dsound/pa_win_ds.c
 	src/hostapi/dsound/pa_win_ds_dynlink.c
 	'''
 
-	wdmks_includes = '''
+    wdmks_includes = '''
 	include/pa_win_wdmks.h
 	'''
 
-	wdmks_sources = '''
+    wdmks_sources = '''
 	src/hostapi/wdmks/pa_win_wdmks.c
 	src/os/win/pa_win_wdmks_utils.c
 	'''
 
-	if bld.env['WITH_WMME']:
-		windows_sources += wmme_sources
-		use_defines += ['PA_USE_WMME=1']
-	
-	if bld.env['WITH_DIRECTX']:
-		windows_sources += dsound_sources
-		use_defines += ['PA_USE_DS=1']
+    wasapi_sources = '''
+	src/hostapi/wasapi/pa_win_wasapi.c
+	'''
 
-	if bld.env['WITH_WDMKS']:
-		windows_sources += wdmks_sources
-		use_defines += ['PA_USE_WDMKS=1']
-		uselib_extra += ['SETUPAPI']
-		uselib_extra += ['KSUSER']
-		uselib_extra += ['UUID']
+    if bld.env.WITH_WMME:
+        windows_sources += wmme_sources
+        use_defines += ['PA_USE_WMME=1']
 
-	obj = bld(features = 'c cshlib',
-	          includes = ['include', 'src/common', 'src/os/win'],
-		  source = common_sources + windows_sources,
-		  uselib = [ 'OLE', 'WINMM' ] + uselib_extra,
-		  defines = use_defines,
-		  target = 'portaudio',
-		  name = 'portaudio',
-		  vnum = '2.0.0'
-		  )
+    if bld.env.WITH_DIRECTX:
+        windows_sources += dsound_sources
+        use_defines += ['PA_USE_DS=1']
 
-	if bld.env['ENABLE_STATIC']:
-		obj = bld(features = 'c cstlib',
-				includes = ['include', 'src/common', 'src/os/win'],
-				source = common_sources + windows_sources,
-				uselib = [ 'OLE', 'WINMM' ] + uselib_extra,
-				defines = use_defines,
-				target = 'portaudio',
-				name = 'portaudio-static',
-				vnum = '2.0.0'
-				)
+    if bld.env.WITH_WDMKS:
+        windows_sources += wdmks_sources
+        use_defines += ['PA_USE_WDMKS=1']
+        uselib_extra += ['SETUPAPI']
+        uselib_extra += ['KSUSER']
+        uselib_extra += ['UUID']
 
-	if bld.env['WITH_TESTS']:
-		test_sources = '''
+    if bld.env.WITH_WASAPI:
+        windows_sources += wasapi_sources
+        use_defines += ['PA_USE_WASAPI=1']
+        uselib_extra += ['UUID']
+
+    bld.shlib(
+        includes=['include', 'src/common', 'src/os/win'],
+        source=common_sources + windows_sources,
+        uselib=['OLE', 'WINMM'] + uselib_extra,
+        defines=use_defines,
+        target='portaudio',
+        name='portaudio',
+        vnum='2.0.0'
+    )
+
+    if bld.env.ENABLE_STATIC:
+        bld.stlib(
+            includes=['include', 'src/common', 'src/os/win'],
+            source=common_sources + windows_sources,
+            uselib=['OLE', 'WINMM'] + uselib_extra,
+            defines=use_defines,
+            target='portaudio',
+            name='portaudio-static',
+            vnum='2.0.0'
+        )
+
+    if bld.env.WITH_TESTS:
+        test_sources = '''
 			test/pa_minlat.c
 			test/patest1.c
 			test/patest_buffer.c
@@ -232,71 +242,70 @@ def build(bld):
 			test/patest_write_stop.c
 			'''.split()
 
-		wmme_test_sources = '''
+        wmme_test_sources = '''
 			test/patest_wmme_find_best_latency_params.c
 			test/patest_wmme_low_level_latency_params.c
 			'''.split()
 
-		if bld.env['WITH_WMME']:
-			test_sources+=wmme_test_sources
+        if bld.env.WITH_WMME:
+            test_sources += wmme_test_sources
 
-		dsound_test_sources = '''
+        dsound_test_sources = '''
 			test/patest_dsound_find_best_latency_params.c
 			test/patest_dsound_low_level_latency_params.c
 			test/patest_dsound_surround.c
 			'''.split()
-		
-		if bld.env['WITH_DIRECTX']:
-			test_sources+=dsound_test_sources
 
-		for test_src in test_sources:
+        if bld.env.WITH_DIRECTX:
+            test_sources += dsound_test_sources
 
-			bld(features = 'c cprogram',
-				includes = ['include', 'src/common', 'src/os/win'],
-				use = ['portaudio'],
-				source = test_src,
-				uselib = [ 'OLE', 'WINMM' ],
-				target = os.path.splitext(test_src)[0]
-				 
-			)
+        for test_src in test_sources:
 
-	if bld.env['WITH_EXAMPLES']:
-		example_sources = '''
+            bld.program(
+                includes=['include', 'src/common', 'src/os/win'],
+                use=['portaudio'],
+                source=test_src,
+                uselib=['OLE', 'WINMM'],
+                target=os.path.splitext(test_src)[0]
+            )
+
+    if bld.env.WITH_EXAMPLES:
+        example_sources = '''
 			examples/pa_devs.c
 			'''.split()
-		
-		for example_src in example_sources:
 
-			bld(features = 'c cprogram',
-				includes = ['include', 'src/common', 'src/os/win'],
-				use = ['portaudio'],
-				source = example_src,
-				uselib = [ 'OLE', 'WINMM' ],
-				target = os.path.splitext(example_src)[0]
-				 
-			)
+        for example_src in example_sources:
 
-	# install headers
+            bld.program(
+                includes=['include', 'src/common', 'src/os/win'],
+                use=['portaudio'],
+                source=example_src,
+                uselib=['OLE', 'WINMM'],
+                target=os.path.splitext(example_src)[0]
+            )
 
-	bld.install_files ('${PREFIX}/include', 'include/portaudio.h')
+    # install headers
 
-	if bld.env['WITH_WMME']:
-		bld.install_files ('${PREFIX}/include', 'include/pa_win_wmme.h')
+    bld.install_files('${PREFIX}/include', 'include/portaudio.h')
 
-	if bld.env['WITH_DIRECTX']:
-		bld.install_files ('${PREFIX}/include', 'include/pa_win_ds.h')
+    if bld.env.WITH_WMME:
+        bld.install_files('${PREFIX}/include', 'include/pa_win_wmme.h')
 
-	if bld.env['WITH_WDMKS']:
-		bld.install_files ('${PREFIX}/include', 'include/pa_win_wdmks.h')
+    if bld.env.WITH_DIRECTX:
+        bld.install_files('${PREFIX}/include', 'include/pa_win_ds.h')
 
-	# build pkgconfig file
+    if bld.env.WITH_WDMKS:
+        bld.install_files('${PREFIX}/include', 'include/pa_win_wdmks.h')
 
-	pc = bld (features = 'subst',
-			source = 'portaudio-2.0.pc.in',
-			target = 'portaudio-2.0.pc',
-			install_path = '${PREFIX}/lib/pkgconfig',
-			dict = {'PREFIX' : bld.env.PREFIX }
-		 )
+    if bld.env.WITH_WASAPI:
+        bld.install_files('${PREFIX}/include', 'include/pa_win_wasapi.h')
 
+    # build pkgconfig file
 
-
+    bld(
+        features='subst',
+        source='portaudio-2.0.pc.in',
+        target='portaudio-2.0.pc',
+        install_path='${PREFIX}/lib/pkgconfig',
+        dict={'PREFIX': bld.env.PREFIX}
+    )
