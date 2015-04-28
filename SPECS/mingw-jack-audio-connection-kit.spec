@@ -7,8 +7,8 @@
 
 Summary:       The Jack Audio Connection Kit
 Name:          mingw-jack-audio-connection-kit
-Version:       1.9.10
-Release:       3%{?dist}
+Version:       1.9.11
+Release:       1%{?dist}
 # The entire source (~500 files) is a mixture of these three licenses
 License:       GPLv2 and GPLv2+ and LGPLv2+
 Group:         System Environment/Daemons
@@ -183,10 +183,12 @@ popd
 pushd win32
 	./waf --destdir=$RPM_BUILD_ROOT install
 	cp -a ChangeLog README README_NETJACK2 TODO ../
+	rm -rf $RPM_BUILD_ROOT%{mingw32_datadir}
 popd
 
 pushd win64
 	./waf --destdir=$RPM_BUILD_ROOT install
+	rm -rf $RPM_BUILD_ROOT%{mingw64_datadir}
 popd
 
 
@@ -240,6 +242,10 @@ popd
 
 
 %changelog
+* Tue Apr 28 2015 Tim Mayberry <mojofunk@gmail.com> - 1.9.11-1
+- Update to upstream rev 61efee4
+- Remove docs which duplicate those in native package
+
 * Fri Jun 6 2014 Tim Mayberry <mojofunk@gmail.com> - 1.9.10-3
 - Update to upstream HEAD and drop all patches
 
