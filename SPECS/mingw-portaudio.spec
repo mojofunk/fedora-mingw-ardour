@@ -5,9 +5,11 @@
 %global mingw_build_win32 1
 %global mingw_build_win64 1
 
+%bcond_with asio
+
 Name:           mingw-%{native_pkg_name}
 Version:        2.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Free, cross platform, open-source, audio I/O library
 Group:          System Environment/Libraries
 License:        MIT
@@ -16,6 +18,9 @@ URL:            http://www.portaudio.com/
 Source0:        portaudio-2.0.tar.bz2
 Source1:        portaudio-2.0-waf
 Source2:        portaudio-2.0-wscript
+%if %{with asio}
+Source3:        ASIOSDK2
+%endif
 
 BuildArch:     noarch
 
@@ -75,6 +80,10 @@ The package contains tests for for %{name}.
 %prep
 %setup -q -c %{native_pkg_name}-%{version}
 
+%if %{with asio}
+cp -r %{SOURCE3} ASIOSDK2
+%endif
+
 pushd %{native_pkg_name}-%{version}
 	cp %{SOURCE1} waf
 	cp %{SOURCE2} wscript
@@ -95,7 +104,7 @@ pushd win32
 	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
 
 	./waf configure --with-wmme --with-directx --with-wasapi \
-	                --with-tests --with-examples
+	                %{?_with_asio} --with-tests --with-examples
 
 	./waf build %{?_smp_mflags} -v
 popd
@@ -108,7 +117,7 @@ pushd win64
 	export PKG_CONFIG_LIBDIR=%{mingw64_libdir}/pkgconfig
 
 	./waf configure --with-wmme --with-directx --with-wasapi \
-	                --with-tests --with-examples
+	                %{?_with_asio} --with-tests --with-examples
 
 	./waf build %{?_smp_mflags} -v
 popd
@@ -133,6 +142,9 @@ popd
 %{mingw32_includedir}/pa_win_wmme.h
 %{mingw32_includedir}/pa_win_ds.h
 %{mingw32_includedir}/pa_win_wasapi.h
+%if %{with asio}
+%{mingw32_includedir}/pa_asio.h
+%endif
 %{mingw32_bindir}/portaudio-2.dll
 %{mingw32_bindir}/pa_devs.exe
 %{mingw32_libdir}/libportaudio*dll.a
@@ -187,6 +199,9 @@ popd
 %{mingw64_includedir}/pa_win_wmme.h
 %{mingw64_includedir}/pa_win_ds.h
 %{mingw64_includedir}/pa_win_wasapi.h
+%if %{with asio}
+%{mingw64_includedir}/pa_asio.h
+%endif
 %{mingw64_bindir}/portaudio-2.dll
 %{mingw64_bindir}/pa_devs.exe
 %{mingw64_libdir}/libportaudio*dll.a
@@ -236,6 +251,10 @@ popd
 %{mingw64_bindir}/patest_write_stop.exe
 
 %changelog
+* Mon Jul 20 2015 Tim Mayberry <mojofunk@gmail.com> - 2.0-8
+- Add conditional ASIO option to build with ASIOSDK
+- Update waf build files to support ASIO
+
 * Tue Apr 28 2015 Tim Mayberry <mojofunk@gmail.com> - 2.0-7
 - Add --with-wasapi option and use it instead of wdmks
 
