@@ -5,7 +5,7 @@
 %global maj 0
 
 Name:           mingw-%{native_pkg_name}
-Version:        0.18.0
+Version:        0.22.0
 Release:        1%{?dist}
 Summary:        An LV2 Resource Description Framework Library
 
@@ -13,8 +13,6 @@ Group:          System Environment/Libraries
 License:        MIT
 URL:            http://drobilla.net/software/lilv/
 Source0:        http://download.drobilla.net/lilv-%{version}.tar.bz2
-Patch0:         mingw-lilv-wscript.patch
-Patch1:         mingw-lilv-pkgconfig.patch
 
 BuildRequires: mingw32-filesystem >= 95
 BuildRequires: mingw64-filesystem >= 95
@@ -70,8 +68,6 @@ This package contains the headers and development libraries for %{name}.
 
 %prep
 %setup -q -c lilv-%{version}
-%patch0 -p0 -b .wscript
-%patch1 -p0 -b .pkgconfig
 
 for dir in win32 win64; do
 	cp -a lilv-%{version} $dir
@@ -141,5 +137,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_sysconfdir}
 %{mingw64_libdir}/pkgconfig/lilv-%{maj}.pc
 
 %changelog
+* Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 0.22.0-1
+- Update to version 0.22.0
+- drop patches, both issues fixed
+
 * Sun May 4 2014 Tim Mayberry <mojofunk@gmail.com> - 0.18.0-1
 - Initial mingw-w64 package
