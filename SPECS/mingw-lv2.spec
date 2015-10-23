@@ -5,7 +5,7 @@
 %global maj 0
 
 Name:           mingw-%{native_pkg_name}
-Version:        1.8.0
+Version:        1.12.0
 Release:        1%{?dist}
 Summary:        A lightweight C library for RDF syntax
 
@@ -103,7 +103,7 @@ popd
 %install
 pushd win32
 	DESTDIR=%{buildroot} ./waf install
-	cp -a NEWS README COPYING ../
+	cp -a NEWS README.md COPYING ../
 popd
 
 pushd win64
@@ -112,7 +112,7 @@ popd
 
 
 %files -n mingw32-%{native_pkg_name}
-%doc NEWS README COPYING
+%doc NEWS README.md COPYING
 %{mingw32_bindir}/lv2specgen.py
 %{mingw32_datadir}/lv2specgen
 %{mingw32_includedir}/lv2.h
@@ -123,7 +123,7 @@ popd
 %{mingw32_libdir}/pkgconfig/lv2.pc
 
 %files -n mingw64-%{native_pkg_name}
-%doc NEWS README COPYING
+%doc NEWS README.md COPYING
 %{mingw64_bindir}/lv2specgen.py
 %{mingw64_datadir}/lv2specgen
 %{mingw64_includedir}/lv2.h
@@ -134,5 +134,8 @@ popd
 %{mingw64_libdir}/pkgconfig/lv2.pc
 
 %changelog
+* Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 1.12.0-1
+- Update to version 0.12.0
+
 * Sun May 4 2014 Tim Mayberry <mojofunk@gmail.com> - 1.8.0-1
 - Initial mingw version of lv2 
