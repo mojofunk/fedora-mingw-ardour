@@ -5,7 +5,7 @@
 %global maj 0
 
 Name:           mingw-%{native_pkg_name}
-Version:        0.4.4
+Version:        0.4.6
 Release:        1%{?dist}
 Summary:        A C library for serializing LV2 plugins
 
@@ -20,8 +20,8 @@ BuildRequires: mingw32-gcc
 BuildRequires: mingw64-gcc
 BuildRequires: mingw32-binutils
 BuildRequires: mingw64-binutils
-BuildRequires: mingw32-lv2
-BuildRequires: mingw64-lv2
+BuildRequires: mingw32-lv2 >= 0.12.0
+BuildRequires: mingw64-lv2 >= 0.12.0
 BuildRequires: mingw32-sord
 BuildRequires: mingw64-sord
 
@@ -121,5 +121,8 @@ mv %{buildroot}%{mingw64_libdir}/sratom*.dll* %{buildroot}%{mingw64_bindir}
 %{mingw64_includedir}/sratom-%{maj}/
 
 %changelog
+* Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 0.4.6-1
+- Update to version 0.4.6
+
 * Sun May 4 2014 Tim Mayberry <mojofunk@gmail.com> - 0.4.4-1
 - Initial mingw-w64 package
