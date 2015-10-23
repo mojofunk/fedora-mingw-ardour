@@ -8,7 +8,7 @@
 %global maj 0
 
 Name:       mingw-%{native_pkg_name}
-Version:    0.12.0
+Version:    0.14.0
 Release:    1%{?dist}
 Summary:    A lightweight Resource Description Framework (RDF) C library
 
@@ -23,14 +23,18 @@ BuildRequires: mingw32-gcc
 BuildRequires: mingw64-gcc
 BuildRequires: mingw32-binutils
 BuildRequires: mingw64-binutils
-BuildRequires: mingw32-serd >= 0.14.0
-BuildRequires: mingw64-serd >= 0.14.0
+BuildRequires: mingw32-pcre
+BuildRequires: mingw64-pcre
+BuildRequires: mingw32-serd >= 0.22.0
+BuildRequires: mingw64-serd >= 0.22.0
 
 #BuildRequires: boost-devel
 #BuildRequires: doxygen
 #BuildRequires: graphviz
 #BuildRequires: glib2-devel
 BuildRequires: python
+
+BuildRequires:  pkgconfig
 
 BuildArch: noarch
 
@@ -78,6 +82,7 @@ rm -rf sord-%{version}
 pushd win32
 	export PREFIX=%{mingw32_prefix}
 	%{mingw32_env}
+	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
 	./waf configure
 	./waf build -v %{?_smp_mflags}
 popd
@@ -85,6 +90,7 @@ popd
 pushd win64
 	export PREFIX=%{mingw64_prefix}
 	%{mingw64_env}
+	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
 	./waf configure
 	./waf build -v %{?_smp_mflags}
 popd
@@ -112,7 +118,7 @@ rm -rf %{buildroot}%{mingw64_mandir}
 
 %files -n mingw32-%{native_pkg_name}
 %doc AUTHORS NEWS README COPYING
-%{mingw32_bindir}/sord-%{maj}-0.dll
+%{mingw32_bindir}/sord-%{maj}.dll
 %{mingw32_bindir}/sordi.exe
 %{mingw32_bindir}/sord_validate.exe
 %{mingw32_libdir}/libsord-%{maj}.dll.a
@@ -121,7 +127,7 @@ rm -rf %{buildroot}%{mingw64_mandir}
 
 %files -n mingw64-%{native_pkg_name}
 %doc AUTHORS NEWS README COPYING
-%{mingw64_bindir}/sord-%{maj}-0.dll
+%{mingw64_bindir}/sord-%{maj}.dll
 %{mingw64_bindir}/sordi.exe
 %{mingw64_bindir}/sord_validate.exe
 %{mingw64_libdir}/libsord-%{maj}.dll.a
@@ -129,5 +135,9 @@ rm -rf %{buildroot}%{mingw64_mandir}
 %{mingw64_includedir}/sord-%{maj}/
 
 %changelog
-* Wed Oct 23 2013 Tim Mayberry <mojofunk@gmail.com> - 0.14.0-1
+* Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 0.14.0-1
+- Update to version 0.14.0
+- Added pcre to BuildRequires to build sord_validate utility
+
+* Wed Oct 23 2013 Tim Mayberry <mojofunk@gmail.com> - 0.12.0-1
 - Initial mingw-w64 package
