@@ -5,8 +5,8 @@
 %global maj 0
 
 Name:           mingw-%{native_pkg_name}
-Version:        0.18.2
-Release:        2%{?dist}
+Version:        0.22.0
+Release:        1%{?dist}
 Summary:        A lightweight C library for RDF syntax
 
 Group:          System Environment/Libraries
@@ -113,7 +113,7 @@ rm -rf %{buildroot}%{mingw64_mandir}
 
 %files -n mingw32-%{native_pkg_name}
 %doc AUTHORS NEWS README COPYING
-%{mingw32_bindir}/serd-%{maj}-0.dll
+%{mingw32_bindir}/serd-%{maj}.dll
 %{mingw32_bindir}/serdi.exe
 %{mingw32_libdir}/libserd-%{maj}.dll.a
 %{mingw32_libdir}/pkgconfig/serd*.pc
@@ -121,13 +121,16 @@ rm -rf %{buildroot}%{mingw64_mandir}
 
 %files -n mingw64-%{native_pkg_name}
 %doc AUTHORS NEWS README COPYING
-%{mingw64_bindir}/serd-%{maj}-0.dll
+%{mingw64_bindir}/serd-%{maj}.dll
 %{mingw64_bindir}/serdi.exe
 %{mingw64_libdir}/libserd-%{maj}.dll.a
 %{mingw64_libdir}/pkgconfig/serd*.pc
 %{mingw64_includedir}/serd-%{maj}/
 
 %changelog
+* Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 0.22.0-1
+- Update to version 0.22.0
+
 * Sun May 4 2014 Tim Mayberry <mojofunk@gmail.com> - 0.18.2-2
 - Tweaks to spec file
 
