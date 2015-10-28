@@ -9,7 +9,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        2.0
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Free, cross platform, open-source, audio I/O library
 Group:          System Environment/Libraries
 License:        MIT
@@ -251,6 +251,9 @@ popd
 %{mingw64_bindir}/patest_write_stop.exe
 
 %changelog
+* Wed Oct 28 2015 Tim Mayberry <mojofunk@gmail.com> - 2.0-9
+- Update to upstream version svn@1963 for wasapi fixes
+
 * Mon Jul 20 2015 Tim Mayberry <mojofunk@gmail.com> - 2.0-8
 - Add conditional ASIO option to build with ASIOSDK
 - Update waf build files to support ASIO
