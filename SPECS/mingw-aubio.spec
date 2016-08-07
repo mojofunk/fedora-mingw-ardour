@@ -2,20 +2,15 @@
 
 %global native_pkg_name aubio
 
-%global mingw_build_win32 1
-%global mingw_build_win64 1
-
 Name:           mingw-%{native_pkg_name}
-Version:        0.4.1
-Release:        2%{?dist}
+Version:        0.4.2
+Release:        1%{?dist}
 Summary:        An API for audio analysis and extracting annotations from audio signals
 
 Group:          System Environment/Libraries
 License:        GPLv2+
 URL:            http://aubio.org/
 Source0:        http://aubio.org/pub/aubio-%{version}.tar.bz2
-
-BuildArch:     noarch
 
 BuildRequires:  mingw32-libsndfile
 BuildRequires:  mingw64-libsndfile
@@ -32,9 +27,11 @@ BuildRequires: mingw64-gcc
 BuildRequires: mingw32-binutils
 BuildRequires: mingw64-binutils
 
-BuildRequires: wine-core
+BuildRequires: wine
 BuildRequires: python
 BuildRequires: pkgconfig
+
+BuildArch:     noarch
 
 
 %description
@@ -108,7 +105,6 @@ popd
 pushd win32
 	./waf --destdir=$RPM_BUILD_ROOT install
 	cp -ar COPYING README.md ../
-	mv $RPM_BUILD_ROOT/%{mingw32_prefix}/lib/libaubio*.dll $RPM_BUILD_ROOT/%{mingw32_prefix}/bin
 popd
 
 rm -rf ${RPM_BUILD_ROOT}/%{mingw32_docdir}
@@ -116,7 +112,6 @@ rm -rf ${RPM_BUILD_ROOT}/%{mingw32_docdir}
 pushd win64
 	./waf --destdir=$RPM_BUILD_ROOT install
 	cp -ar COPYING README.md ../
-	mv $RPM_BUILD_ROOT/%{mingw64_prefix}/lib/libaubio*.dll $RPM_BUILD_ROOT/%{mingw64_prefix}/bin
 popd
 
 rm -rf ${RPM_BUILD_ROOT}/%{mingw64_docdir}
@@ -148,6 +143,11 @@ rm -rf ${RPM_BUILD_ROOT}/%{mingw64_docdir}
 %{mingw64_libdir}/pkgconfig/aubio.pc
 
 %changelog
+* Sat Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 0.4.2-1
+- Update to version 0.4.2
+- No longer need to move dll into bin after waf update/upgrade
+- Build now seems to require wine, not just wine-core to execute tests?
+
 * Thu May 8 2014 Tim Mayberry <mojofunk@gmail.com> - 0.4.1-2
 - Disable support for jack as causes build failure
 - Add missing mingw-libsamplerate dependences
