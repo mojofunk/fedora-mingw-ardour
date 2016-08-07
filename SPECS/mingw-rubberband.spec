@@ -7,7 +7,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        1.8.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Audio time-stretching and pitch-shifting library
 
 Group:          System Environment/Libraries
@@ -135,5 +135,8 @@ popd
 %{mingw64_libdir}/pkgconfig/rubberband.pc
 
 %changelog
+* Sat Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 1.8.1-2
+- Rebuild for Fedora 24
+
 * Wed Apr 23 2014 Tim Mayberry <mojofunk@gmail.com> - 1.8.1-1
 - Initial mingw package of 1.8.1 using waf build system
