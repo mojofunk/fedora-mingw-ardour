@@ -8,7 +8,7 @@
 Summary:        Theme engines for GTK+ 2.0
 Name:           mingw-gtk2-engines
 Version:        2.20.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 # for details on which engines are GPL vs LGPL, see COPYING
 License:        LGPLv2+
 Group:          System Environment/Libraries
@@ -159,6 +159,9 @@ find $RPM_BUILD_ROOT%{mingw32_datadir}/themes -name "gtkrc*" -perm /111 -exec ch
 %{mingw32_libdir}/gtk-2.0/2.10.0/engines/libthinice.a
 
 %changelog
+* Sat Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 2.20.2-6
+- Rebuild for F24
+
 * Tue Mar 10 2015 Tim Mayberry <mojofunk@gmail.com> - 2.20.2-5
 - Rebuild for F21
 
