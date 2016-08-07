@@ -6,7 +6,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        0.4.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A C library for serializing LV2 plugins
 
 Group:          System Environment/Libraries
@@ -65,17 +65,18 @@ This package contains the headers and development libraries for %{name}.
 
 
 %prep
-%setup -q -c sratom-%{version}
+%setup -q -c %{native-pkg-name}-%{version}
 
 for dir in win32 win64; do
-	cp -a sratom-%{version} $dir
+	cp -a %{native_pkg_name}-%{version} $dir
 done
-rm -rf sratom-%{version}
+rm -rf %{native_pkg_name}-%{version}
 
 %build
 
 pushd win32
 	export PREFIX=%{mingw32_prefix}
+	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
 	%{mingw32_env}
 	./waf configure
 	./waf build -v %{?_smp_mflags}
@@ -83,6 +84,7 @@ popd
 
 pushd win64
 	export PREFIX=%{mingw64_prefix}
+	export PKG_CONFIG_LIBDIR=%{mingw64_libdir}/pkgconfig
 	%{mingw64_env}
 	./waf configure
 	./waf build -v %{?_smp_mflags}
@@ -121,6 +123,9 @@ mv %{buildroot}%{mingw64_libdir}/sratom*.dll* %{buildroot}%{mingw64_bindir}
 %{mingw64_includedir}/sratom-%{maj}/
 
 %changelog
+* Sun Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 0.4.6-2
+- Rebuild for Fedora 24
+
 * Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 0.4.6-1
 - Update to version 0.4.6
 
