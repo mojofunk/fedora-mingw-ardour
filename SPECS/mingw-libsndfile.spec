@@ -6,7 +6,7 @@
 %global mingw_pkg_name libsndfile
 
 Name:		mingw-libsndfile
-Version:	1.0.26pre5
+Version:	1.0.27
 Release:	1%{?dist}
 Summary:	Library for reading and writing sound files
 License:	LGPLv2+
@@ -135,6 +135,10 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_mandir}
 
 
 %changelog
+* Sat Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 1.0.27
+- Update to version 1.0.27
+- Rebuild for F24
+
 * Tue Mar 10 2015 Tim Mayberry <mojofunk@gmail.com> - 1.0.26pre5-1
 - new 1.0.26pre5 version
 - Rebuild for F21
