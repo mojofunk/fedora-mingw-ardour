@@ -2,14 +2,11 @@
 
 %global native_pkg_name portaudio
 
-%global mingw_build_win32 1
-%global mingw_build_win64 1
-
 %bcond_with asio
 
 Name:           mingw-%{native_pkg_name}
 Version:        2.0
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Free, cross platform, open-source, audio I/O library
 Group:          System Environment/Libraries
 License:        MIT
@@ -251,6 +248,10 @@ popd
 %{mingw64_bindir}/patest_write_stop.exe
 
 %changelog
+* Sun Aug 7 2016 Tim Mayberry <mojofunk@gmail.com> - 2.0-10
+- Rebuild for Fedora 24
+- Updates to waf version and wscript
+
 * Wed Oct 28 2015 Tim Mayberry <mojofunk@gmail.com> - 2.0-9
 - Update to upstream version svn@1963 for wasapi fixes
 
