@@ -2,11 +2,8 @@
 
 %global native_pkg_name libltc
 
-%global mingw_build_win32 1
-%global mingw_build_win64 1
-
 Name:       mingw-%{native_pkg_name}
-Version:    1.1.4
+Version:    1.2.0
 Release:    1%{?dist}
 Summary:    Linear/Longitudinal Time Code (LTC) Library
 
@@ -92,5 +89,8 @@ rm -rf ${RPM_BUILD_ROOT}%{mingw64_mandir}
 %{mingw64_libdir}/pkgconfig/ltc.pc
 
 %changelog
+* Sun Aug 7 2016 Tim Mayberry <mojofunk@gmail.com> - 1.2.0-1
+- Update to version 1.2.0
+
 * Thu Feb 19 2015 Tim Mayberry <mojofunk@gmail.com> - 1.1.4-1
 - Initial mingw-w64 package
