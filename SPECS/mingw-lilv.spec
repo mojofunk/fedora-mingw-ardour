@@ -6,7 +6,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        0.22.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        An LV2 Resource Description Framework Library
 
 Group:          System Environment/Libraries
@@ -137,6 +137,9 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_sysconfdir}
 %{mingw64_libdir}/pkgconfig/lilv-%{maj}.pc
 
 %changelog
+* Sun Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 0.22.0-2
+- Rebuild for Fedora 24
+
 * Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 0.22.0-1
 - Update to version 0.22.0
 - drop patches, both issues fixed
