@@ -4,7 +4,7 @@
 
 Name:         mingw-%{native_pkg_name}
 Version:      0.27
-Release:      3%{?dist}
+Release:      4%{?dist}
 Summary:      Open Sound Control library
 License:      LGPLv2+
 Group:        System Environment/Libraries
@@ -105,6 +105,9 @@ find $RPM_BUILD_ROOT%{mingw64_libdir} -name '*.la' -delete
 %{mingw64_libdir}/liblo.a
 
 %changelog
+* Sat Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 0.27-4
+- Rebuild for Fedora 24
+
 * Tue Mar 10 2015 Tim Mayberry <mojofunk@gmail.com> - 0.27-3
 - Rebuild for Fedora 21
 
