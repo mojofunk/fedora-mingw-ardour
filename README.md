@@ -5,6 +5,8 @@ cross-compiler toolchain.
 The packages contained in this repository are all the packages that
 have not yet been included in Fedora but most already are thankfully.
 
+## Getting the Sources
+
 The Sources for these packages are not included in this repository
 and have to be downloaded separately and put in the SOURCES directory
 of the rpmbuild root.
@@ -19,23 +21,29 @@ or in more recent Fedora versions
 
 $dnf download --source flac
 
+## Building Packages
+
+Put the source for a package in the SOURCES directory, then from within the
+SPEC directory use rpmbuild to build the RPM package
+
+e.g $rpmbuild -ba mingw-libsndfile.spec
+
+If there were no errors the packages will be placed in RPMS/noarch and need to
+be installed
+
+e.g dnf install mingw*libsndfile
+
+## A custom RPM build directory
+
 You may also want to use a ~/.rpmmacros file to set(perhaps temporarily) the
 path to the rpmbuild root dir to use to build rpm packages, rather than the
 default ~/rpmbuild
 
-If you choose to build with support for JACK then an unreleased version is
-required from:
-	
-https://github.com/jackaudio/jack2.git
-
-These packages should be built and or installed in this order:
+## Packages to Install or Build and Install in order.
 
 install wine, needed to run some tests during the configure process
-
 install mingw*gcc
-
 install mingw*gcc-c++
-
 install mingw*libogg
 
 yum group install 'Development Tools'
@@ -69,14 +77,15 @@ build using --with asio
 
 e.g $rpmbuild -ba mingw-portaudio.spec --with asio
 
-# no longer necessary with Fedora>19 as gcc/mingw includes the winpthreads
-library
-
-#install mingw*pthreads
+It is no longer necessary to build a pthreads implementation with Fedora>19 as
+gcc/mingw includes the winpthreads library.
 
 install mingw*libgnurx
 
-If building with support for JACK backend
+If you choose to build with support for JACK then an unreleased version is
+required from:
+
+https://github.com/jackaudio/jack2.git
 
 build/install mingw-jack-audio-connection-kit
 
@@ -110,7 +119,7 @@ build/install mingw-lilv
 
 build/install mingw-libltc
 
-Optional
+# Other Optional Packages
 
 build/install mingw*cppunit, if tests enabled
 install mingw*gdb, for debugging
