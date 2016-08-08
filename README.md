@@ -53,8 +53,8 @@ packages
 
 `$dnf install mingw*pkg-config mingw*flac mingw*libvorbis`
 
-`build/install mingw-libsndfile`
-`build/install mingw-libsamplerate`
+build/install mingw-libsndfile
+build/install mingw-libsamplerate
 
 Install all the Gtk+ related mingw packages
 
@@ -65,6 +65,9 @@ I think Intltool is required to build gtk2-engines?
 `$dnf install intltool`
 
 `$dnf install mingw*libxml2`
+
+Ardour includes a version of the Clearlooks theme engine so the gtk2-engines
+package should not be required...
 
 build/install mingw-gtk2-engines <- provides clearlooks
 
@@ -87,21 +90,23 @@ gcc/mingw includes the winpthreads library.
 If you choose to build with support for JACK then an unreleased version is
 required from:
 
-https://github.com/jackaudio/jack2.git
+`https://github.com/jackaudio/jack2.git`
 
 build/install mingw-jack-audio-connection-kit
 
-install mingw*fftw
+`$dnf install mingw*fftw`
 
 build/install mingw-liblo
 
-install mingw*boost
+`$dnf install mingw*boost`
 
-install mingw*curl
+`$dnf install mingw*curl`
 
-install cmake
+CMake is required for Taglib
 
-install mingw*taglib
+`$dnf install cmake`
+
+`$dnf install mingw*taglib`
 
 build/install mingw-vamp-plugin-sdk
 
@@ -123,5 +128,9 @@ build/install mingw-libltc
 
 # Other Optional Packages
 
-build/install mingw*cppunit, if tests enabled
-install mingw*gdb, for debugging
+build/install mingw-cppunit, if tests enabled
+
+For debugging install GDB so it can be included in the Ardour
+package/installation
+
+`$dnf install mingw*gdb`
