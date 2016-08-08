@@ -122,7 +122,7 @@ build/install mingw-lilv
 
 build/install mingw-libltc
 
-# Other Optional Packages
+## Other Optional Packages
 
 build/install mingw-cppunit, if tests enabled
 
