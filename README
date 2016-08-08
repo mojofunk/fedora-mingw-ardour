@@ -1,27 +1,32 @@
-This is a rough list of library dependencies for building Ardour
-for windows using the MinGW compiler on Fedora 19 and 20.
- 
+What follows are instructions to build all the necessary library dependencies
+for a Windows version of Ardour on Fedora 24 using using a gcc/mingw64
+cross-compiler toolchain.
+
 The packages contained in this repository are all the packages that
-have not yet been included in Fedora.
+have not yet been included in Fedora but most already are thankfully.
 
 The Sources for these packages are not included in this repository
 and have to be downloaded separately and put in the SOURCES directory
 of the rpmbuild root.
 
-These packages should use the versions that are in the native Fedora
-packages so an easy way to download the correct sources is with
+These packages should use where possible the versions that are in the native
+Fedora packages so an easy way to download the correct sources is with
 yumdownloader and then extract the source from the package
 
 e.g $yumdownloader --source flac
 
-or $dnf download --source flac
+or in more recent Fedora versions
 
-The ~/.rpmmacros file is used to set the path to the rpmbuild root
-dir, rather than the default ~/rpmbuild
+$dnf download --source flac
 
-Jack2 is the only package that requires an unreleased version from
-https://github.com/jackaudio/jack2.git if you choose to build with jack
-support.
+You may also want to use a ~/.rpmmacros file to set(perhaps temporarily) the
+path to the rpmbuild root dir to use to build rpm packages, rather than the
+default ~/rpmbuild
+
+If you choose to build with support for JACK then an unreleased version is
+required from:
+	
+https://github.com/jackaudio/jack2.git
 
 These packages should be built and or installed in this order:
 
