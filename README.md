@@ -15,23 +15,23 @@ These packages should use where possible the versions that are in the native
 Fedora packages so an easy way to download the correct sources is with
 yumdownloader and then extract the source from the package
 
-e.g $yumdownloader --source flac
+e.g `$yumdownloader --source flac`
 
 or in more recent Fedora versions
 
-$dnf download --source flac
+`$dnf download --source flac`
 
 ## Building Packages
 
 Put the source for a package in the SOURCES directory, then from within the
 SPEC directory use rpmbuild to build the RPM package
 
-e.g $rpmbuild -ba mingw-libsndfile.spec
+e.g `$rpmbuild -ba mingw-libsndfile.spec`
 
 If there were no errors the packages will be placed in RPMS/noarch and need to
 be installed
 
-e.g dnf install mingw*libsndfile
+e.g `$dnf install mingw*libsndfile`
 
 ## A custom RPM build directory
 
@@ -41,28 +41,30 @@ default ~/rpmbuild
 
 ## Packages to Install or Build and Install in order.
 
-install wine, needed to run some tests during the configure process
-install mingw*gcc
-install mingw*gcc-c++
-install mingw*libogg
+`$dnf/yum group install 'Development Tools'`
+`$dnf/yum group install 'RPM Development Tools'`
 
-yum group install 'Development Tools'
-yum group install 'RPM Development Tools'
+Wine is needed to needed to run some tests during the configure process of some
+packages
 
-install mingw*pkg-config
+`$dnf install wine`
 
-install mingw*flac <- requires libogg
+`$dnf install mingw*gcc mingw*gcc-c++ mingw*libogg`
 
-install mingw*libvorbis
+`$dnf install mingw*pkg-config mingw*flac mingw*libvorbis`
 
-build/install mingw-libsndfile <- requires flac, vorbis
-build/install mingw-libsamplerate <- requires sndfile for examples?
+`build/install mingw-libsndfile`
+`build/install mingw-libsamplerate`
 
-install mingw*gtkmm24, this will pull in all the gtk+ deps etc
+Install all the Gtk+ related mingw packages
 
-install intltool
+`$dnf install mingw*gtkmm24`
 
-install mingw*libxml2
+I think Intltool is required to build gtk2-engines?
+
+`$dnf install intltool`
+
+`$dnf install mingw*libxml2`
 
 build/install mingw-gtk2-engines <- provides clearlooks
 
@@ -80,7 +82,7 @@ e.g $rpmbuild -ba mingw-portaudio.spec --with asio
 It is no longer necessary to build a pthreads implementation with Fedora>19 as
 gcc/mingw includes the winpthreads library.
 
-install mingw*libgnurx
+`$dnf install mingw*libgnurx`
 
 If you choose to build with support for JACK then an unreleased version is
 required from:
