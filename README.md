@@ -42,6 +42,7 @@ default ~/rpmbuild
 ## Packages to Install or Build and Install in order.
 
 `$dnf/yum group install 'Development Tools'`
+
 `$dnf/yum group install 'RPM Development Tools'`
 
 Wine is needed to needed to run some tests during the configure process of some
@@ -54,6 +55,7 @@ packages
 `$dnf install mingw*pkg-config mingw*flac mingw*libvorbis`
 
 build/install mingw-libsndfile
+
 build/install mingw-libsamplerate
 
 Install all the Gtk+ related mingw packages
@@ -69,7 +71,7 @@ I think Intltool is required to build gtk2-engines?
 Ardour includes a version of the Clearlooks theme engine so the gtk2-engines
 package should not be required...
 
-build/install mingw-gtk2-engines <- provides clearlooks
+build/install mingw-gtk2-engines
 
 Clone the portaudio repository at https://github.com/mojofunk/portaudio so that
 it is located in the same directory as the fedora-mingw-ardour repo, checkout
@@ -124,7 +126,7 @@ build/install mingw-libltc
 
 ## Other Optional Packages
 
-build/install mingw-cppunit, if tests enabled
+build/install mingw-cppunit, to be able to run unit tests
 
 For debugging install GDB so it can be included in the Ardour
 package/installation
