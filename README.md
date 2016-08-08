@@ -102,10 +102,6 @@ build/install mingw-liblo
 
 `$dnf install mingw*curl`
 
-CMake is required for Taglib
-
-`$dnf install cmake`
-
 `$dnf install mingw*taglib`
 
 build/install mingw-vamp-plugin-sdk
