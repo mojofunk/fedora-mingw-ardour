@@ -5,7 +5,7 @@
 %global maj 0
 
 Name:           mingw-%{native_pkg_name}
-Version:        0.22.0
+Version:        0.24.0
 Release:        1%{?dist}
 Summary:        A lightweight C library for RDF syntax
 
@@ -128,6 +128,9 @@ rm -rf %{buildroot}%{mingw64_mandir}
 %{mingw64_includedir}/serd-%{maj}/
 
 %changelog
+* Mon Oct 10 2016 Tim Mayberry <mojofunk@gmail.com> - 0.24.0-1
+- Update to version 0.24.0
+
 * Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 0.22.0-1
 - Update to version 0.22.0
 
