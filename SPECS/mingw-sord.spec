@@ -8,7 +8,7 @@
 %global maj 0
 
 Name:       mingw-%{native_pkg_name}
-Version:    0.14.0
+Version:    0.16.0
 Release:    1%{?dist}
 Summary:    A lightweight Resource Description Framework (RDF) C library
 
@@ -25,8 +25,8 @@ BuildRequires: mingw32-binutils
 BuildRequires: mingw64-binutils
 BuildRequires: mingw32-pcre
 BuildRequires: mingw64-pcre
-BuildRequires: mingw32-serd >= 0.22.0
-BuildRequires: mingw64-serd >= 0.22.0
+BuildRequires: mingw32-serd >= 0.24.0
+BuildRequires: mingw64-serd >= 0.24.0
 
 #BuildRequires: boost-devel
 #BuildRequires: doxygen
@@ -135,6 +135,9 @@ rm -rf %{buildroot}%{mingw64_mandir}
 %{mingw64_includedir}/sord-%{maj}/
 
 %changelog
+* Mon Oct 10 2016 Tim Mayberry <mojofunk@gmail.com> - 0.16.0-1
+- Update to version 0.16.0
+
 * Fri Oct 23 2015 Tim Mayberry <mojofunk@gmail.com> - 0.14.0-1
 - Update to version 0.14.0
 - Added pcre to BuildRequires to build sord_validate utility
