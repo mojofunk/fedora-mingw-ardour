@@ -5,8 +5,8 @@
 %global maj 0
 
 Name:           mingw-%{native_pkg_name}
-Version:        0.22.0
-Release:        2%{?dist}
+Version:        0.24.0
+Release:        1%{?dist}
 Summary:        An LV2 Resource Description Framework Library
 
 Group:          System Environment/Libraries
@@ -120,6 +120,7 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_sysconfdir}
 %doc NEWS README COPYING
 %{mingw32_bindir}/lilv-%{maj}.dll
 %{mingw32_bindir}/lilv-bench.exe
+%{mingw32_bindir}/lv2apply.exe
 %{mingw32_bindir}/lv2info.exe
 %{mingw32_bindir}/lv2ls.exe
 %{mingw32_includedir}/lilv-%{maj}/
@@ -130,6 +131,7 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_sysconfdir}
 %doc NEWS README COPYING
 %{mingw64_bindir}/lilv-%{maj}.dll
 %{mingw64_bindir}/lilv-bench.exe
+%{mingw64_bindir}/lv2apply.exe
 %{mingw64_bindir}/lv2info.exe
 %{mingw64_bindir}/lv2ls.exe
 %{mingw64_includedir}/lilv-%{maj}/
@@ -137,6 +139,10 @@ rm -rf $RPM_BUILD_ROOT%{mingw64_sysconfdir}
 %{mingw64_libdir}/pkgconfig/lilv-%{maj}.pc
 
 %changelog
+* Mon Oct 10 2016 Tim Mayberry <mojofunk@gmail.com> - 0.24.0-1
+- Update to version 0.24.0
+- Add new lv2apply utility to package
+
 * Sun Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 0.22.0-2
 - Rebuild for Fedora 24
 
