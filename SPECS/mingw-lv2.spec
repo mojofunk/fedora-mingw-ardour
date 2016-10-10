@@ -5,8 +5,8 @@
 %global maj 0
 
 Name:           mingw-%{native_pkg_name}
-Version:        1.12.0
-Release:        2%{?dist}
+Version:        1.14.0
+Release:        1%{?dist}
 Summary:        A lightweight C library for RDF syntax
 
 # lv2specgen template.html is CC-AT-SA
@@ -116,6 +116,11 @@ pushd win64
 	DESTDIR=%{buildroot} ./waf install
 popd
 
+# Move bin/LV2 directory to lib/lv2 to match unix fs layout
+
+mv %{buildroot}%{mingw32_bindir}/LV2 %{buildroot}%{mingw32_libdir}/lv2
+mv %{buildroot}%{mingw64_bindir}/LV2 %{buildroot}%{mingw64_libdir}/lv2
+
 
 %files -n mingw32-%{native_pkg_name}
 %doc NEWS README.md COPYING
@@ -140,6 +145,10 @@ popd
 %{mingw64_libdir}/pkgconfig/lv2.pc
 
 %changelog
+* Mon Oct 10 2016 Tim Mayberry <mojofunk@gmail.com> - 1.14.0-1
+- Update to version 1.14.0
+- Fix change to lv2 install path to match unix/linux fs layout
+
 * Sun Aug 7 2016 Tim Mayberry <mojofunk@gmail.com> - 1.12.0-2
 - Disable debug package generation to build on Fedora>=23
 - Tried to build plugins, executables built but with wrong extension
