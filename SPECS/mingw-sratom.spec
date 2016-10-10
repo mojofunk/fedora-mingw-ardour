@@ -5,8 +5,8 @@
 %global maj 0
 
 Name:           mingw-%{native_pkg_name}
-Version:        0.4.6
-Release:        2%{?dist}
+Version:        0.6.0
+Release:        1%{?dist}
 Summary:        A C library for serializing LV2 plugins
 
 Group:          System Environment/Libraries
@@ -110,19 +110,23 @@ mv %{buildroot}%{mingw64_libdir}/sratom*.dll* %{buildroot}%{mingw64_bindir}
 
 %files -n mingw32-%{native_pkg_name}
 %doc NEWS README COPYING
-%{mingw32_bindir}/sratom-%{maj}-0.dll
+%{mingw32_bindir}/sratom-%{maj}.dll
 %{mingw32_libdir}/libsratom-%{maj}.dll.a
 %{mingw32_libdir}/pkgconfig/sratom*.pc
 %{mingw32_includedir}/sratom-%{maj}/
 
 %files -n mingw64-%{native_pkg_name}
 %doc NEWS README COPYING
-%{mingw64_bindir}/sratom-%{maj}-0.dll
+%{mingw64_bindir}/sratom-%{maj}.dll
 %{mingw64_libdir}/libsratom-%{maj}.dll.a
 %{mingw64_libdir}/pkgconfig/sratom*.pc
 %{mingw64_includedir}/sratom-%{maj}/
 
 %changelog
+* Mon Oct 10 2016 Tim Mayberry <mojofunk@gmail.com> - 0.6.0-1
+- Update to version 0.6.0
+- minor version has been dropped from dll name
+
 * Sun Aug 6 2016 Tim Mayberry <mojofunk@gmail.com> - 0.4.6-2
 - Rebuild for Fedora 24
 
