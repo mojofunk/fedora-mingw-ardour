@@ -6,7 +6,7 @@
 
 Name:           mingw-%{native_pkg_name}
 Version:        1.14.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A lightweight C library for RDF syntax
 
 # lv2specgen template.html is CC-AT-SA
@@ -93,16 +93,14 @@ rm -rf %{native_pkg_name}-%{version}
 pushd win32
 	export PREFIX=%{mingw32_prefix}
 	export PKG_CONFIG_LIBDIR=%{mingw32_libdir}/pkgconfig
-	#./waf configure --copy-headers --debug
-	./waf configure --no-plugins --copy-headers
+	./waf configure --no-plugins --copy-headers --lv2dir=%{mingw32_libdir}/lv2
 	./waf build -v %{?_smp_mflags}
 popd
 
 pushd win64
 	export PREFIX=%{mingw64_prefix}
 	export PKG_CONFIG_LIBDIR=%{mingw64_libdir}/pkgconfig
-	#./waf configure --copy-headers --debug
-	./waf configure --no-plugins --copy-headers
+	./waf configure --no-plugins --copy-headers --lv2dir=%{mingw64_libdir}/lv2
 	./waf build -v %{?_smp_mflags}
 popd
 
@@ -115,12 +113,6 @@ popd
 pushd win64
 	DESTDIR=%{buildroot} ./waf install
 popd
-
-# Move bin/LV2 directory to lib/lv2 to match unix fs layout
-
-mv %{buildroot}%{mingw32_bindir}/LV2 %{buildroot}%{mingw32_libdir}/lv2
-mv %{buildroot}%{mingw64_bindir}/LV2 %{buildroot}%{mingw64_libdir}/lv2
-
 
 %files -n mingw32-%{native_pkg_name}
 %doc NEWS README.md COPYING
@@ -145,6 +137,9 @@ mv %{buildroot}%{mingw64_bindir}/LV2 %{buildroot}%{mingw64_libdir}/lv2
 %{mingw64_libdir}/pkgconfig/lv2.pc
 
 %changelog
+* Wed Oct 12 2016 Tim Mayberry <mojofunk@gmail.com> - 1.14.0-2
+- Use --lv2dir option to match unix/linux lv2 install path
+
 * Mon Oct 10 2016 Tim Mayberry <mojofunk@gmail.com> - 1.14.0-1
 - Update to version 1.14.0
 - Fix change to lv2 install path to match unix/linux fs layout
