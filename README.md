@@ -87,6 +87,8 @@ e.g $rpmbuild -ba mingw-portaudio.spec --with asio
 It is no longer necessary to build a pthreads implementation with Fedora>19 as
 gcc/mingw includes the winpthreads library.
 
+Install libgnurx to provide regex.h API
+
 `$dnf install mingw*libgnurx`
 
 If you choose to build with support for JACK then an unreleased version is
@@ -123,6 +125,8 @@ build/install mingw-sratom
 build/install mingw-lilv
 
 build/install mingw-libltc
+
+`$dnf install mingw*libarchive`
 
 ## Other Optional Packages
 
